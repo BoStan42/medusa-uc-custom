@@ -218,15 +218,17 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ order, reservations }) => {
           <DisplayTotal
             key={index}
             currency={order.currency_code}
-            totalAmount={-1 * order.discount_total}
+            totalAmount={order.discount_total ? -1 * order.discount_total : 0}
             totalTitle={
               <div className="inter-small-regular text-grey-90 flex items-center">
                 {t("detail-cards-discount", "Discount:")}{" "}
                 <Badge className="ml-3" variant="default">
                   {discount.code}
                 </Badge>
+                {discount.rule.type === 'free_shipping' ? <span className="text-gray-500 ml-1">- free shipping</span> : ''}
               </div>
             }
+            skip_amount={discount.rule.type === 'free_shipping' ? true : false}
           />
         ))}
         {order?.gift_card_transactions?.map((gcTransaction, index) => (
