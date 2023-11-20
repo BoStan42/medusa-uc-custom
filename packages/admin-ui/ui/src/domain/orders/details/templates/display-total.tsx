@@ -8,6 +8,7 @@ export const DisplayTotal = ({
   variant = "regular",
   subtitle = "",
   totalColor = "text-grey-90",
+  skipAmount = false
 }) => (
   <div className="mt-4 flex items-center justify-between">
     <div className="flex flex-col">
@@ -23,12 +24,14 @@ export const DisplayTotal = ({
         <div className="inter-small-regular text-grey-50 mt-1">{subtitle}</div>
       )}
     </div>
-    <DisplayTotalAmount
-      totalAmount={totalAmount}
-      currency={currency}
-      variant={variant}
-      totalColor={totalColor}
-    />
+    {!skipAmount &&
+      <DisplayTotalAmount
+        totalAmount={totalAmount}
+        currency={currency}
+        variant={variant}
+        totalColor={totalColor}
+      />
+    }
   </div>
 )
 

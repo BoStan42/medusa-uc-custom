@@ -214,6 +214,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ order, reservations }) => {
           totalAmount={order.subtotal}
           totalTitle={t("detail-cards-subtotal", "Subtotal")}
         />
+        
         {order?.discounts?.map((discount, index) => (
           <DisplayTotal
             key={index}
@@ -227,6 +228,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ order, reservations }) => {
                 </Badge>
               </div>
             }
+            skipAmount={discount.rule.type === 'free_shipping'}
           />
         ))}
         {order?.gift_card_transactions?.map((gcTransaction, index) => (
