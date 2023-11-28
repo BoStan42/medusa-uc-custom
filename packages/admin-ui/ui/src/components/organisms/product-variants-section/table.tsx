@@ -114,12 +114,41 @@ const VariantsTable = ({ variants, actions }: Props) => {
     updateVariantInventory,
   } = actions
 
-  const {checkAccess, loaded: accessLoaded} = useAccess();
-  const [inventoryAccess, setInventoryAccess] = useState(false);
+  const getNewRows = () => {
+    const newRows = [...rows]
+    const defaultVariantMarker = "(default)"
 
-  useEffect(()=>{
-    setInventoryAccess(checkAccess('/inventory'));
-  },[accessLoaded])
+    const defaultVariant = newRows.find(
+      (variant) => variant?.original?.metadata?.default === "true"
+    )
+
+    const defaultTitleVariant = newRows.find((variant) =>
+      variant.original.title.endsWith(defaultVariantMarker)
+    )
+
+    if (
+      defaultVariant &&
+      !defaultVariant.original.title.endsWith(defaultVariantMarker)
+    ) {
+      defaultVariant.original.title = `${defaultVariant.original.title} ${defaultVariantMarker}`
+    } else if (
+      defaultTitleVariant &&
+      defaultTitleVariant?.original?.metadata?.default === "false"
+    ) {
+      defaultTitleVariant.original.title = defaultTitleVariant?.original.title
+        .replace(/\(default\)/g, "")
+        .trim()
+    }
+
+    return newRows
+  }
+
+  const { checkAccess, loaded: accessLoaded } = useAccess()
+  const [inventoryAccess, setInventoryAccess] = useState(false)
+
+  useEffect(() => {
+    setInventoryAccess(checkAccess("/inventory"))
+  }, [accessLoaded])
 
   const getTableRowActionables = (variant: ProductVariant) => {
     const inventoryManagementActions = []
@@ -186,7 +215,7 @@ const VariantsTable = ({ variants, actions }: Props) => {
         })}
       </Table.Head>
       <Table.Body {...getTableBodyProps()}>
-        {rows.map((row) => {
+        {getNewRows().map((row) => {
           prepareRow(row)
           const actionables = getTableRowActionables(row.original)
           const { key, ...rest } = row.getRowProps()
