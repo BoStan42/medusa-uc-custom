@@ -115,10 +115,9 @@ const VariantsTable = ({ variants, actions }: Props) => {
   } = actions
 
   const newDataRows = useMemo(() => {
-    const newRows = [...rows]
     const defaultVariantMarker = "(default)"
 
-    return newRows.map((variant) => {
+    return rows.map((variant) => {
       if (
         variant?.original?.metadata?.default === "true" &&
         !variant.original.title.endsWith(defaultVariantMarker)
