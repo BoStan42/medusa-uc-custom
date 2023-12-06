@@ -114,34 +114,28 @@ const VariantsTable = ({ variants, actions }: Props) => {
     updateVariantInventory,
   } = actions
 
-  const getNewRows = () => {
+  const newDataRows = useMemo(() => {
     const newRows = [...rows]
     const defaultVariantMarker = "(default)"
 
-    const defaultVariant = newRows.find(
-      (variant) => variant?.original?.metadata?.default === "true"
-    )
+    return newRows.map((variant) => {
+      if (
+        variant?.original?.metadata?.default === "true" &&
+        !variant.original.title.endsWith(defaultVariantMarker)
+      ) {
+        variant.original.title = `${variant.original.title} ${defaultVariantMarker}`
+      } else if (
+        variant?.original?.metadata?.default === "false" ||
+        !variant?.original?.metadata?.default
+      ) {
+        variant.original.title = variant.original.title
+          .replace(/\(default\)/g, "")
+          .trim()
+      }
 
-    const defaultTitleVariant = newRows.find((variant) =>
-      variant.original.title.endsWith(defaultVariantMarker)
-    )
-
-    if (
-      defaultVariant &&
-      !defaultVariant.original.title.endsWith(defaultVariantMarker)
-    ) {
-      defaultVariant.original.title = `${defaultVariant.original.title} ${defaultVariantMarker}`
-    } else if (
-      defaultTitleVariant &&
-      defaultTitleVariant?.original?.metadata?.default === "false"
-    ) {
-      defaultTitleVariant.original.title = defaultTitleVariant?.original.title
-        .replace(/\(default\)/g, "")
-        .trim()
-    }
-
-    return newRows
-  }
+      return variant
+    })
+  }, [rows])
 
   const { checkAccess, loaded: accessLoaded } = useAccess()
   const [inventoryAccess, setInventoryAccess] = useState(false)
@@ -215,7 +209,7 @@ const VariantsTable = ({ variants, actions }: Props) => {
         })}
       </Table.Head>
       <Table.Body {...getTableBodyProps()}>
-        {getNewRows().map((row) => {
+        {newDataRows.map((row) => {
           prepareRow(row)
           const actionables = getTableRowActionables(row.original)
           const { key, ...rest } = row.getRowProps()
