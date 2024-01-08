@@ -61,7 +61,7 @@ const OrderIndex = () => {
           onClick={() => openSalesReportModal()}
         >
           <CashIcon size={20} />
-          Orders Report
+          Orders Reports
         </Button>
         <Button
         key="export"
@@ -160,7 +160,7 @@ const OrderIndex = () => {
       )}
       {salesReportModalOpen && (
         <SalesReportModal
-          title="Orders Report"
+          title="Orders Reports"
           handleClose={() => closeSalesReportModal()}
           loading={false}
         />
