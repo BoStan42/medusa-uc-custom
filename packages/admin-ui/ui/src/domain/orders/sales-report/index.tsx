@@ -25,7 +25,7 @@ const SalesReportModal: React.FC<ExportModalProps> = ({
 
   const [startDate, setStartDate] = useState(new Date(now.getFullYear(), now.getMonth(), 1))
   const [endDate, setEndDate] = useState(now)
-  const [url, setUrl] = useState('')
+  const [urlParams, setUrlParams] = useState('')
 
   // Date select
 
@@ -47,24 +47,24 @@ const SalesReportModal: React.FC<ExportModalProps> = ({
 
   // Get report
 
-  const getUrl = () => {
+  const getUrlParams = () => {
 
-      let reportUrl = MEDUSA_BACKEND_URL_NOSLASH+'/admin/sales-report/'
+      let params = '?start_date='+moment(startDate).format("YYYY-MM-DD")+'T00:00:00'
 
-      reportUrl += '?start_date='+moment(startDate).format("YYYY-MM-DD")+'T00:00:00'
-
-      reportUrl += '&end_date='+moment(endDate).format("YYYY-MM-DD")+'T23:59:59'
+      params += '&end_date='+moment(endDate).format("YYYY-MM-DD")+'T23:59:59'
       
-      return reportUrl;
+      return params;
 
   }
 
-  const getReport = () => {
-    openUrlNewWindow(url);
+  const getReport = (type: string) => {
+
+    let reportUrl = MEDUSA_BACKEND_URL_NOSLASH+'/admin/'+type+'/' + urlParams
+    openUrlNewWindow(reportUrl);
   }
 
   useEffect(()=>{
-    setUrl(getUrl());
+    setUrlParams(getUrlParams());
   },[startDate, endDate])
 
 
@@ -93,12 +93,11 @@ const SalesReportModal: React.FC<ExportModalProps> = ({
             </div>
         </Modal.Content>
         <Modal.Footer>
-          <div className="flex w-full justify-end">
+          <div className="flex w-full justify-end gap-4">
             <Button
               variant="ghost"
               size="small"
               onClick={handleClose}
-              className="mr-2"
             >
               Cancel
             </Button>
@@ -107,9 +106,18 @@ const SalesReportModal: React.FC<ExportModalProps> = ({
               disabled={loading}
               variant="primary"
               size="small"
-              onClick={getReport}
+              onClick={()=>getReport('sales-report')}
             >
-              Get report
+              Sales report
+            </Button>
+            <Button
+              loading={loading}
+              disabled={loading}
+              variant="primary"
+              size="small"
+              onClick={()=>getReport('shipping-report')}
+            >
+              Shipping report
             </Button>
           </div>
         </Modal.Footer>

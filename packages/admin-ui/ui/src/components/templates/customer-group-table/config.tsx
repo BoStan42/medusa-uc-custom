@@ -109,7 +109,7 @@ export const CUSTOMER_GROUPS_CUSTOMERS_LIST_TABLE_COLUMNS: Column<Customer|any>[
       accessor: "billing_address",
       Cell: ({ cell: { value } }) => (
           <div className="mr-4">
-            <div className="flex flex-row justify-start items-center gap-1">
+            <div className="flex flex-row flex-wrap justify-start items-center gap-1">
               {value?.country_code ?
                 <ReactCountryFlag
                   className={"rounded"}

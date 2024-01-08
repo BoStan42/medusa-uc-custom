@@ -36,7 +36,7 @@ export const useCustomerColumns = () => {
         Header: <div>Country</div>,
         accessor: "billing_address",
         Cell: ({ cell: { value } }) => (
-            <div className="flex flex-row justify-start items-center gap-2">
+            <div className="flex flex-row flex-wrap justify-start items-center gap-1">
               {value?.country_code ?
                 <div className="rounded-rounded flex">
                     <ReactCountryFlag
