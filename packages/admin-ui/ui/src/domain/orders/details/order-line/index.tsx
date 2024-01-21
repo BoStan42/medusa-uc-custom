@@ -30,19 +30,24 @@ const OrderLine = ({
             <ImagePlaceholder />
           )}
         </div>
-        <div className="flex max-w-[185px] flex-col justify-center">
-          <span className="inter-small-regular text-grey-90 truncate">
+        <div className="flex flex-col justify-center">
+          <div className="inter-small-regular text-grey-90 ">
             {item.title}
-          </span>
-          {item?.variant && (
-            <span className="inter-small-regular text-grey-50 truncate">
-              {`${item.variant.title}${
-                item.variant.sku ? ` (${item.variant.sku})` : ""
-              }`}
-            </span>
+          </div>
+          {!!item?.variant && (
+            <>
+              <div className="inter-small-regular text-grey-50 ">
+                {item.variant.title}
+              </div>
+              {!!item.variant.sku &&
+                <div className="inter-small-regular text-grey-50 ">
+                    SKU: {item.variant.sku}
+                </div>
+              }
+            </>
           )}
-          {item?.metadata.Holster && (
-            <span className="inter-small-regular text-grey-50 truncate">
+          {!!item?.metadata?.Holster && (
+            <span className="inter-small-regular text-grey-50">
               {`Holster: ${item.metadata.Holster}`}
             </span>
           )}
@@ -58,7 +63,7 @@ const OrderLine = ({
               tax: [],
             })}
           </div>
-          <div className="inter-small-regular text-grey-50">
+          <div className="inter-small-regular text-grey-50 whitespace-nowrap">
             x {item.quantity}
           </div>
           {/*
