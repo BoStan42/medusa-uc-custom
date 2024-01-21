@@ -21,7 +21,7 @@ const OrderLine = ({
 }: OrderLineProps) => {
   const { isFeatureEnabled } = useFeatureFlag()
   return (
-    <div className="hover:bg-grey-5 rounded-rounded mx-[-5px] mb-1 flex h-[64px] justify-between py-2 px-[5px]">
+    <div className="hover:bg-grey-5 rounded-rounded mx-[-5px] mb-2 flex justify-between items-start py-2 px-[5px]">
       <div className="flex justify-center space-x-4">
         <div className="rounded-rounded flex h-[48px] w-[36px] overflow-hidden">
           {item.thumbnail ? (
@@ -30,19 +30,24 @@ const OrderLine = ({
             <ImagePlaceholder />
           )}
         </div>
-        <div className="flex max-w-[185px] flex-col justify-center">
-          <span className="inter-small-regular text-grey-90 truncate">
+        <div className="flex flex-col justify-start">
+          <div className="inter-small-regular text-grey-90 ">
             {item.title}
-          </span>
-          {item?.variant && (
-            <span className="inter-small-regular text-grey-50 truncate">
-              {`${item.variant.title}${
-                item.variant.sku ? ` (${item.variant.sku})` : ""
-              }`}
-            </span>
+          </div>
+          {!!item?.variant && (
+            <>
+              <div className="inter-small-regular text-grey-50 ">
+                {item.variant.title}
+              </div>
+              {!!item.variant.sku &&
+                <div className="inter-small-regular text-grey-50 ">
+                    SKU: {item.variant.sku}
+                </div>
+              }
+            </>
           )}
-          {item?.metadata.Holster && (
-            <span className="inter-small-regular text-grey-50 truncate">
+          {!!item?.metadata?.Holster && (
+            <span className="inter-small-regular text-grey-50">
               {`Holster: ${item.metadata.Holster}`}
             </span>
           )}
@@ -58,12 +63,14 @@ const OrderLine = ({
               tax: [],
             })}
           </div>
-          <div className="inter-small-regular text-grey-50">
+          <div className="inter-small-regular text-grey-50 whitespace-nowrap">
             x {item.quantity}
           </div>
+          {/*
           {isFeatureEnabled("inventoryService") && isAllocatable && (
             <ReservationIndicator reservations={reservations} lineItem={item} />
           )}
+          */}
           <div className="inter-small-regular text-grey-90 min-w-[55px] text-right">
             {formatAmountWithSymbol({
               amount: item.total ?? 0,

@@ -175,7 +175,7 @@ const VariantStockForm = ({ form, locationLevels }: Props) => {
                       const locationLevel = levelMap.get(level.location_id)
 
                       return (
-                        <div key={level.id} className="flex items-center py-3">
+                        <div key={level.id} className="flex items-center py-3 border-t">
                           <div className="inter-base-regular flex items-center">
                             <IconBadge className="mr-base">
                               <BuildingsIcon />
@@ -185,13 +185,17 @@ const VariantStockForm = ({ form, locationLevels }: Props) => {
                           <div className="ml-auto flex">
                             <div className="mr-base text-small text-grey-50 flex flex-col">
                               <span className="whitespace-nowrap text-right">
+                                {`${locationLevel!.stocked_quantity!} in stock`}
+                              </span>
+                              <span className="whitespace-nowrap text-right">
                                 {`${locationLevel!.reserved_quantity} reserved`}
                               </span>
-                              <span className="whitespace-nowrap text-right">{`${
+                              <span className="whitespace-nowrap text-right font-bold">{`${
                                 locationLevel!.stocked_quantity! -
                                 locationLevel!.reserved_quantity!
                               } available`}</span>
                             </div>
+                            {/*
                             <InputField
                               placeholder={"0"}
                               type="number"
@@ -201,6 +205,7 @@ const VariantStockForm = ({ form, locationLevels }: Props) => {
                                 { valueAsNumber: true }
                               )}
                             />
+                            */}
                           </div>
                         </div>
                       )

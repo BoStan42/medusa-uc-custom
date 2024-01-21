@@ -313,6 +313,7 @@ const InventoryRow = ({
   const getRowActionables = () => {
     const productId = inventory.variants?.[0]?.product_id
 
+    /*
     const actions = [
       {
         label: t(
@@ -322,6 +323,7 @@ const InventoryRow = ({
         onClick: showAdjustAvailabilityModal,
       },
     ]
+    */
 
     if (productId) {
       return [
@@ -329,18 +331,17 @@ const InventoryRow = ({
           label: t("inventory-table-view-product", "View Product"),
           onClick: () => navigate(`/a/products/${productId}`),
         },
-        ...actions,
+        /*...actions,*/
       ]
     }
 
-    return actions
+    return/* actions*/
   }
 
   return (
     <Table.Row
       color={"inherit"}
       onClick={showAdjustAvailabilityModal}
-      clickable
       forceDropdown
       actions={getRowActionables()}
       {...rest}
@@ -353,12 +354,14 @@ const InventoryRow = ({
           </Table.Cell>
         )
       })}
+      {/*
       {isShowingAdjustAvailabilityModal && (
         <AdjustAvailabilityModal
           inventory={inventory}
           handleClose={closeAdjustAvailabilityModal}
         />
       )}
+      */}
     </Table.Row>
   )
 }
