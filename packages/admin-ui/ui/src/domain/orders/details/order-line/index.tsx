@@ -61,9 +61,11 @@ const OrderLine = ({
           <div className="inter-small-regular text-grey-50">
             x {item.quantity}
           </div>
+          {/*
           {isFeatureEnabled("inventoryService") && isAllocatable && (
             <ReservationIndicator reservations={reservations} lineItem={item} />
           )}
+          */}
           <div className="inter-small-regular text-grey-90 min-w-[55px] text-right">
             {formatAmountWithSymbol({
               amount: item.total ?? 0,

@@ -308,6 +308,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = () => {
                   gotoPage(0)
                 }}
               />
+              {/*
               <Button
                 variant="secondary"
                 size="small"
@@ -315,6 +316,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = () => {
               >
                 Create reservation
               </Button>
+              */}
             </div>
           }
           {...getTableProps()}
@@ -351,12 +353,14 @@ const ReservationsTable: React.FC<ReservationsTableProps> = () => {
           </Table.Body>
         </Table>
       </TableContainer>
+      {/*
       <Fade isVisible={createReservationState} isFullScreen={true}>
         <NewReservation
           locationId={queryObject.location_id}
           onClose={closeReservationCreate}
         />
       </Fade>
+      */}
     </>
   )
 }
@@ -399,7 +403,7 @@ const ReservationRow = ({
       <Table.Row
         color={"inherit"}
         forceDropdown
-        actions={getRowActionables()}
+        /*actions={getRowActionables()}*/
         {...rest}
       >
         {row.cells.map((cell: Cell, index: number) => {
@@ -411,6 +415,7 @@ const ReservationRow = ({
           )
         })}
       </Table.Row>
+      {/*
       {showEditReservation && (
         <EditReservationDrawer
           close={() => setShowEditReservation(null)}
@@ -435,6 +440,7 @@ const ReservationRow = ({
           handleClose={() => setShowDeleteReservation(false)}
         />
       )}
+      */}
     </>
   )
 }
