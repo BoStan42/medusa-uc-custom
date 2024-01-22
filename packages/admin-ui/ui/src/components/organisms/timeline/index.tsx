@@ -133,7 +133,7 @@ const Timeline: React.FC<TimelineProps> = ({ orderId }) => {
                 "pointer-events-none opacity-50": !events,
               })}
             >
-              <Actionables actions={actions} />
+              {/*<Actionables actions={actions} />*/}
             </div>
           </div>
           <div
@@ -158,6 +158,7 @@ const Timeline: React.FC<TimelineProps> = ({ orderId }) => {
           )}
         </div>
       </div>
+      {/*
       {showRequestReturn && order && (
         <ReturnMenu
           order={order}
@@ -170,6 +171,7 @@ const Timeline: React.FC<TimelineProps> = ({ orderId }) => {
       {showRegisterClaim && order && (
         <RegisterClaimMenu order={order} onClose={closeRegisterClaim} />
       )}
+      */}
     </>
   )
 }

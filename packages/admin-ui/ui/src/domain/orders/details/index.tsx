@@ -417,14 +417,14 @@ const OrderDetails = () => {
                   )}
                   status={<OrderStatusComponent status={order.status} />}
                   forceDropdown={true}
-                  // actionables={[
-                  //   {
-                  //     label: t("details-cancel-order", "Cancel Order"),
-                  //     icon: <CancelIcon size={"20"} />,
-                  //     variant: "danger",
-                  //     onClick: () => handleDeleteOrder(),
-                  //   },
-                  // ]}
+                  /*actionables={[
+                    {
+                      label: t("details-cancel-order", "Cancel Order"),
+                      icon: <CancelIcon size={"20"} />,
+                      variant: "danger",
+                      onClick: () => handleDeleteOrder(),
+                    },
+                  ]}*/
                 >
                   <div className="mt-6 flex flex-wrap gap-4 divide-x">
                     <div className="flex flex-col">
