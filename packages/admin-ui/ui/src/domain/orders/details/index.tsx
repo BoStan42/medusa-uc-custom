@@ -635,10 +635,19 @@ const OrderDetails = () => {
                   <div className="inter-small-regular">
                     {order.metadata?._odoo_order_create ?
                     <div className="flex flex-col gap-1">
-                      <div><span className="text-grey-50">Sync date:</span> {order.metadata?._odoo_order_create?._date ? order.metadata?._odoo_order_create?._date : '-'}</div>
-                      <div>{order.metadata?._odoo_order_create?._odoo_order_id ? <><span className="text-grey-50">Odoo order ID:</span> {order.metadata?._odoo_order_create?._odoo_order_id}</> : <span className="text-red-600">Order not created</span>}</div>
-                      <div><span className="text-grey-50">Odoo order confirmed:</span> {order.metadata?._odoo_order_create?._odoo_order_confirmed ? <>Yes</> : <>No</>}</div>
+                      
+                      {!!order.metadata?._odoo_order_create?._date &&
+                        <div><span className="text-grey-50">Sync date:</span> {order.metadata._odoo_order_create._date}</div>
+                      }
+                      
+                      {!!order.metadata?._odoo_order_create?._odoo_order_id &&
+                        <div><span className="text-grey-50">Odoo Sales Order ID:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=sale.order&id="+order.metadata._odoo_order_create._odoo_order_id} className="text-blue-60" target="_blank" rel="nofollow">S{parseInt(order.metadata._odoo_order_create._odoo_order_id).toLocaleString('en-US', {minimumIntegerDigits: 5, useGrouping:false})}</a></div>
+                      }
 
+                      {!!order.metadata?._odoo_order_create?._odoo_delivery_order_id &&
+                        <div><span className="text-grey-50">Odoo Delivery Order ID:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=stock.picking&id="+order.metadata._odoo_order_create._odoo_delivery_order_id} className="text-blue-60" target="_blank" rel="nofollow">{order.metadata._odoo_order_create._odoo_delivery_order_name ? order.metadata._odoo_order_create._odoo_delivery_order_name : order.metadata._odoo_order_create._odoo_delivery_order_id}</a></div>
+                      }
+                      
                       {!!order.metadata?._odoo_order_create?._errors?.length &&
                       <div className="mt-2">
                         <div>Errors</div>
