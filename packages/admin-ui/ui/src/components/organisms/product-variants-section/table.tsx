@@ -118,22 +118,17 @@ const VariantsTable = ({ variants, actions }: Props) => {
     const defaultVariantMarker = "(default)"
 
     return rows.map((variant) => {
-      if (
-        variant?.original?.metadata?.default === "true" &&
-        !variant.original.title.endsWith(defaultVariantMarker)
-      ) {
-        variant.original.title = `${variant.original.title} ${defaultVariantMarker}`
-      } else if (
-        variant?.original?.metadata?.default === "false" ||
-        !variant?.original?.metadata?.default
-      ) {
-        variant.original.title = variant.original.title
-          .replace(/\(default\)/g, "")
-          .trim()
+      if (variant?.original?.metadata?.default === "true") {
+        if (!variant.original.title.endsWith(defaultVariantMarker)) {
+          variant.original.title = `${variant.original.title} ${defaultVariantMarker}`
+        }
+      } else {
+        variant.original.title = variant.original.title.replace(/\(default\)/g, "").trim()
       }
 
       return variant
     })
+
   }, [rows])
 
   const { checkAccess, loaded: accessLoaded } = useAccess()
