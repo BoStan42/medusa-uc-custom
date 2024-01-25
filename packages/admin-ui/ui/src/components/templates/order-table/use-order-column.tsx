@@ -128,6 +128,19 @@ const useOrderTableColums = () => {
         Cell: ({ cell: { value } }) => value?.name ?? "N/A",
       },
       {
+        Header: t("order-table-odoo-sync-status", "Odoo"),
+        accessor: "metadata",
+        Cell: ({ cell: { value } }) => {
+          return (
+            <>
+              <span title="Sales Order">{value?._odoo_order_create?._odoo_order_id ? "S" : "-"}</span>
+              /
+              <span title="Delivery Order">{value?._odoo_order_create?._odoo_delivery_order_id ? "D" : "-"}</span>
+            </>
+          )
+        },
+      },
+      {
         Header: () => (
           <div className="text-right">{t("order-table-total", "Total")}</div>
         ),
