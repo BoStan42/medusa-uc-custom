@@ -114,12 +114,12 @@ const VariantsTable = ({ variants, actions }: Props) => {
     updateVariantInventory,
   } = actions
 
-  const {checkAccess, loaded: accessLoaded} = useAccess();
-  const [inventoryAccess, setInventoryAccess] = useState(false);
+  const { checkAccess, loaded: accessLoaded } = useAccess()
+  const [inventoryAccess, setInventoryAccess] = useState(false)
 
-  useEffect(()=>{
-    setInventoryAccess(checkAccess('/inventory'));
-  },[accessLoaded])
+  useEffect(() => {
+    setInventoryAccess(checkAccess("/inventory"))
+  }, [accessLoaded])
 
   const getTableRowActionables = (variant: ProductVariant) => {
     const inventoryManagementActions = []
@@ -192,11 +192,12 @@ const VariantsTable = ({ variants, actions }: Props) => {
           const { key, ...rest } = row.getRowProps()
           return (
             <Table.Row color={"inherit"} key={key} {...rest}>
-              {row.cells.map((cell) => {
+              {row.cells.map((cell, index) => {
                 const { key, ...rest } = cell.getCellProps()
                 return (
                   <Table.Cell key={key} {...rest}>
                     {cell.render("Cell")}
+                    {cell.value = cell.row.original.metadata?.default === 'true' && index === 0 ?  ' (default)' : ''}
                   </Table.Cell>
                 )
               })}
