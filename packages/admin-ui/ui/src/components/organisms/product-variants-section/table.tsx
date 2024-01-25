@@ -114,23 +114,6 @@ const VariantsTable = ({ variants, actions }: Props) => {
     updateVariantInventory,
   } = actions
 
-  const newDataRows = useMemo(() => {
-    const defaultVariantMarker = "(default)"
-
-    return rows.map((variant) => {
-      if (variant?.original?.metadata?.default === "true") {
-        if (!variant.original.title.endsWith(defaultVariantMarker)) {
-          variant.original.title = `${variant.original.title} ${defaultVariantMarker}`
-        }
-      } else {
-        variant.original.title = variant.original.title.replace(/\(default\)/g, "").trim()
-      }
-
-      return variant
-    })
-
-  }, [rows])
-
   const { checkAccess, loaded: accessLoaded } = useAccess()
   const [inventoryAccess, setInventoryAccess] = useState(false)
 
@@ -203,17 +186,18 @@ const VariantsTable = ({ variants, actions }: Props) => {
         })}
       </Table.Head>
       <Table.Body {...getTableBodyProps()}>
-        {newDataRows.map((row) => {
+        {rows.map((row) => {
           prepareRow(row)
           const actionables = getTableRowActionables(row.original)
           const { key, ...rest } = row.getRowProps()
           return (
             <Table.Row color={"inherit"} key={key} {...rest}>
-              {row.cells.map((cell) => {
+              {row.cells.map((cell, index) => {
                 const { key, ...rest } = cell.getCellProps()
                 return (
                   <Table.Cell key={key} {...rest}>
                     {cell.render("Cell")}
+                    {cell.value = cell.row.original.metadata?.default === 'true' && index === 0 ?  ' (default)' : ''}
                   </Table.Cell>
                 )
               })}
