@@ -641,11 +641,11 @@ const OrderDetails = () => {
                       }
                       
                       {!!order.metadata?._odoo_order_create?._odoo_order_id &&
-                        <div><span className="text-grey-50">Odoo Sales Order ID:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=sale.order&id="+order.metadata._odoo_order_create._odoo_order_id} className="text-blue-60" target="_blank" rel="nofollow">S{parseInt(order.metadata._odoo_order_create._odoo_order_id).toLocaleString('en-US', {minimumIntegerDigits: 5, useGrouping:false})}</a></div>
+                        <div><span className="text-grey-50">Odoo Sales Order:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=sale.order&id="+order.metadata._odoo_order_create._odoo_order_id} className="text-blue-60" target="_blank" rel="nofollow">{order.metadata._odoo_order_create._odoo_order_name ? order.metadata._odoo_order_create._odoo_order_name : 'View'}</a></div>
                       }
 
                       {!!order.metadata?._odoo_order_create?._odoo_delivery_order_id &&
-                        <div><span className="text-grey-50">Odoo Delivery Order ID:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=stock.picking&id="+order.metadata._odoo_order_create._odoo_delivery_order_id} className="text-blue-60" target="_blank" rel="nofollow">{order.metadata._odoo_order_create._odoo_delivery_order_name ? order.metadata._odoo_order_create._odoo_delivery_order_name : order.metadata._odoo_order_create._odoo_delivery_order_id}</a></div>
+                        <div><span className="text-grey-50">Odoo Delivery Order:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=stock.picking&id="+order.metadata._odoo_order_create._odoo_delivery_order_id} className="text-blue-60" target="_blank" rel="nofollow">{order.metadata._odoo_order_create._odoo_delivery_order_name ? order.metadata._odoo_order_create._odoo_delivery_order_name : order.metadata._odoo_order_create._odoo_delivery_order_id}</a></div>
                       }
                       
                       {!!order.metadata?._odoo_order_create?._errors?.length &&
