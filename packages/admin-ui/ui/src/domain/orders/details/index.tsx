@@ -73,6 +73,7 @@ import { MEDUSA_BACKEND_URL_NOSLASH } from "../../../constants/medusa-backend-ur
 import DownloadIcon from "../../../components/fundamentals/icons/download-icon"
 import openUrlNewWindow from "../../../utils/open-link-new-window"
 import { useAccess } from "../../../providers/access-provider"
+import StatusDot from "../../../components/fundamentals/status-indicator"
 
 type OrderDetailFulfillment = {
   title: string
@@ -650,9 +651,13 @@ const OrderDetails = () => {
                       
                       {!!order.metadata?._odoo_order_create?._errors?.length &&
                       <div className="mt-2">
-                        <div>Errors</div>
                         {order.metadata?._odoo_order_create?._errors?.map(e=>
-                          <div className="mt-1 text-grey-50">{e}</div>
+                          <div className="mt-1">
+                            <StatusDot
+                              title={e}
+                              variant="danger"
+                            />
+                          </div>
                         )}
                       </div>
                       }
