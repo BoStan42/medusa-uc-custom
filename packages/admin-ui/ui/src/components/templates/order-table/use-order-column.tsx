@@ -132,11 +132,11 @@ const useOrderTableColums = () => {
         accessor: "metadata",
         Cell: ({ cell: { value } }) => {
           return (
-            <>
+            <div className={value?._odoo_order_create?._errors?.length ? "text-red-600" : ""}>
               <span title="Sales Order">{value?._odoo_order_create?._odoo_order_id ? "S" : "-"}</span>
               /
               <span title="Delivery Order">{value?._odoo_order_create?._odoo_delivery_order_id ? "D" : "-"}</span>
-            </>
+            </div>
           )
         },
       },
