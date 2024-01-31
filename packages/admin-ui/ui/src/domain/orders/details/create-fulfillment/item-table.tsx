@@ -82,7 +82,8 @@ const FulfillmentLine = ({
     { enabled: isLocationFulfillmentEnabled }
   )
 
-  const hasInventoryItem = !!variant?.inventory.length
+  // Disable inventory check
+  const hasInventoryItem = false//!!variant?.inventory.length
 
   React.useEffect(() => {
     if (isLocationFulfillmentEnabled) {
@@ -124,10 +125,11 @@ const FulfillmentLine = ({
     isLocationFulfillmentEnabled,
   ])
 
-  const validQuantity =
+  // Disable quantity check
+  const validQuantity = true/*
     !locationId ||
     (locationId &&
-      (!availableQuantity || quantities[item.id] <= availableQuantity))
+      (!availableQuantity || quantities[item.id] <= availableQuantity))*/
 
   React.useEffect(() => {
     setErrors((errors) => {
