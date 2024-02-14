@@ -139,17 +139,8 @@ export const VariantCard = ({
         </p>
         {ean && <span className="inter-base-regular text-grey-50">{ean}</span>}
       </div>
-      <div className="flex items-center justify-end text-right">
-        <InputField
-          {...register(`variants.${index}.inventory_quantity`, {
-            min: FormValidator.nonNegativeNumberRule("Inventory"),
-            valueAsNumber: true,
-          })}
-          type="number"
-          placeholder="100..."
-          className="max-w-[200px]"
-          errors={errors}
-        />
+      <div className="flex items-center justify-end text-right text-gray-600">
+        <span className={clsx({"text-red-600": Number(product?.variants?.at(index)?.inventory_quantity) < 0})}>{product?.variants?.at(index)?.inventory_quantity ? product?.variants?.at(index)?.inventory_quantity : '-'}</span>
       </div>
       <div className="ml-xlarge pr-base flex items-center justify-center">
         <Actionables
