@@ -263,7 +263,10 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ order, reservations }) => {
             key={index}
             currency={order.currency_code}
             totalAmount={
-              (order.subtotal + order.shipping_total) * (value / 100)
+              (order.subtotal +
+                order.shipping_total -
+                (order.discount_total ?? 0)) *
+              (value / 100)
             }
             totalTitle={`${taxName} (${value}%)`}
           />
