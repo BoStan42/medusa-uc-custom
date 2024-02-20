@@ -12,7 +12,7 @@ export const TrackingLink = ({ trackingLink }: TProps) => {
   if (trackingLink?.url) {
     console.log("trackingLink", trackingLink)
     return (
-      <div className="flex flex-row">
+      <div className="flex-column flex">
         <a
           style={{ textDecoration: "none" }}
           target="_blank"
@@ -47,7 +47,8 @@ export const TrackingLink = ({ trackingLink }: TProps) => {
               Download label
             </a>
           )
-        )}{" "}
+        )}
+        {";"}&nbsp;
         {trackingLink?.metadata?.CustomsInvoice &&
           trackingLink?.metadata?.CustomsInvoice.length > 100 &&
           trackingLink?.metadata?.CustomsInvoice.includes(
@@ -60,9 +61,10 @@ export const TrackingLink = ({ trackingLink }: TProps) => {
               href={trackingLink.metadata.CustomsInvoice}
               rel="noreferrer"
             >
-              Download Customs Invoice
+              Customs Invoice
             </a>
-          )}{" "}
+          )}
+        {";"}&nbsp;
         {trackingLink?.metadata?.USMCA &&
           trackingLink?.metadata?.USMCA.length > 100 &&
           trackingLink?.metadata?.USMCA.includes(
@@ -75,7 +77,7 @@ export const TrackingLink = ({ trackingLink }: TProps) => {
               href={trackingLink.metadata.USMCA}
               rel="noreferrer"
             >
-              Download USMCA
+              USMCA
             </a>
           )}
       </div>
