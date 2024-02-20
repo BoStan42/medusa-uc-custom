@@ -10,6 +10,7 @@ type TProps = {
 
 export const TrackingLink = ({ trackingLink }: TProps) => {
   if (trackingLink?.url) {
+    console.log("trackingLink", trackingLink)
     return (
       <div className="flex flex-row">
         <a
@@ -46,7 +47,7 @@ export const TrackingLink = ({ trackingLink }: TProps) => {
               Download label
             </a>
           )
-        )}
+        )}{" "}
         {trackingLink?.metadata?.CustomsInvoice &&
           trackingLink?.metadata?.CustomsInvoice.length > 100 &&
           trackingLink?.metadata?.CustomsInvoice.includes(
@@ -61,7 +62,7 @@ export const TrackingLink = ({ trackingLink }: TProps) => {
             >
               Download Customs Invoice
             </a>
-          )}
+          )}{" "}
         {trackingLink?.metadata?.USMCA &&
           trackingLink?.metadata?.USMCA.length > 100 &&
           trackingLink?.metadata?.USMCA.includes(
