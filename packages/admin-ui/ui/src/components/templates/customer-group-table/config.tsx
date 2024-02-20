@@ -128,7 +128,7 @@ export const CUSTOMER_GROUPS_CUSTOMERS_LIST_TABLE_COLUMNS: Column<Customer|any>[
     {
       accessor: "metadata.description",
       Header: "Description",
-      Cell: ({ cell: { value } }) => <div className="max-w-[400px] truncate">{value}</div>,
+      Cell: ({ cell: { value } }) => <div className="max-w-[300px] truncate">{value}</div>,
     },
     {
       accessor: "orders",

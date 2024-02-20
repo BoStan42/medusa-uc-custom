@@ -9,9 +9,29 @@ import { useWidgets } from "../../providers/widget-provider"
 import Details from "./details"
 import CustomerGroups from "./groups"
 import CustomersPageTableHeader from "./header"
+import ExportIcon from "../../components/fundamentals/icons/export-icon"
+import { MEDUSA_BACKEND_URL_NOSLASH } from "../../constants/medusa-backend-url"
+import openUrlNewWindow from "../../utils/open-link-new-window"
 
 const CustomerIndex = () => {
   const { getWidgets } = useWidgets()
+
+  const actions = [
+    {
+      label: "Export customers",
+      onClick: () => exportCustomers(),
+      icon: (
+        <span className="text-grey-90">
+          <ExportIcon size={20} />
+        </span>
+      ),
+    },
+  ]
+
+  const exportCustomers = () => {
+    let exportUrl = MEDUSA_BACKEND_URL_NOSLASH+'/admin/customers/export/all'
+    openUrlNewWindow(exportUrl);
+  }
 
   return (
     <div className="gap-y-xsmall flex flex-col">
@@ -29,6 +49,7 @@ const CustomerIndex = () => {
       <BodyCard
         customHeader={<CustomersPageTableHeader activeView="customers" />}
         className="h-fit"
+        actionables={actions}
       >
         <CustomerTable />
       </BodyCard>

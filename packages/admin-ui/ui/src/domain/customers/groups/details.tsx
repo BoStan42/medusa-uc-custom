@@ -27,6 +27,9 @@ import useToggleState from "../../../hooks/use-toggle-state"
 import { useWidgets } from "../../../providers/widget-provider"
 import { getErrorStatus } from "../../../utils/get-error-status"
 import CustomerGroupModal from "./customer-group-modal"
+import ExportIcon from "../../../components/fundamentals/icons/export-icon"
+import { MEDUSA_BACKEND_URL_NOSLASH } from "../../../constants/medusa-backend-url"
+import openUrlNewWindow from "../../../utils/open-link-new-window"
 
 /**
  * Default filtering config for querying customer group customers list endpoint.
@@ -106,7 +109,21 @@ function CustomerGroupCustomersList(props: CustomerGroupCustomersListProps) {
         </span>
       ),
     },
+    {
+      label: "Export customers",
+      onClick: () => exportCustomers(),
+      icon: (
+        <span className="text-grey-90">
+          <ExportIcon size={20} />
+        </span>
+      ),
+    },
   ]
+
+  const exportCustomers = () => {
+    let exportUrl = MEDUSA_BACKEND_URL_NOSLASH+'/admin/customers/export/'+groupId
+    openUrlNewWindow(exportUrl);
+  }
 
   /*
    * Calculate which customers need to be added/removed.
