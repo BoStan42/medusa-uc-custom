@@ -47,6 +47,36 @@ export const TrackingLink = ({ trackingLink }: TProps) => {
             </a>
           )
         )}
+        {trackingLink?.metadata?.CustomsInvoice &&
+          trackingLink?.metadata?.CustomsInvoice.length > 100 &&
+          trackingLink?.metadata?.CustomsInvoice.includes(
+            "data:application/pdf;base64,JVB"
+          ) && (
+            <a
+              style={{ textDecoration: "none" }}
+              target="_blank"
+              download={`${trackingLink.tracking_number}-CustomsInvoice.pdf`}
+              href={trackingLink.metadata.CustomsInvoice}
+              rel="noreferrer"
+            >
+              Download Customs Invoice
+            </a>
+          )}
+        {trackingLink?.metadata?.USMCA &&
+          trackingLink?.metadata?.USMCA.length > 100 &&
+          trackingLink?.metadata?.USMCA.includes(
+            "data:application/pdf;base64,JVB"
+          ) && (
+            <a
+              style={{ textDecoration: "none" }}
+              target="_blank"
+              download={`${trackingLink.tracking_number}-USMCA.pdf`}
+              href={trackingLink.metadata.USMCA}
+              rel="noreferrer"
+            >
+              Download USMCA
+            </a>
+          )}
       </div>
     )
   } else {
