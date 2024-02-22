@@ -60,7 +60,7 @@ function CustomersListTableHeaderRow(props: CustomersListTableHeaderRowProps) {
         return (
           <Table.HeadCell
             className={className}
-            {...getHeaderProps(getSortByToggleProps())}
+            {...getHeaderProps()}
           >
             {render("Header")}
           </Table.HeadCell>

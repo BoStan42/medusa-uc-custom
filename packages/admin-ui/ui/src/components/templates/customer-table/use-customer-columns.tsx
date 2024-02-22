@@ -54,6 +54,11 @@ export const useCustomerColumns = () => {
         ),
       },
       {
+        accessor: "metadata.description",
+        Header: "Description",
+        Cell: ({ cell: { value } }) => <div className="max-w-[300px] truncate" title={value}>{value}</div>,
+      },
+      {
         accessor: "groups",
         Header: () => <div>Groups</div>,
         Cell: ({ cell: { value } }) => (
