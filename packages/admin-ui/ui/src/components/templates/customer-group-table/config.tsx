@@ -3,7 +3,6 @@ import { Column } from "react-table"
 
 import CustomerAvatarItem from "../../molecules/customer-avatar-item"
 import { getColor } from "../../../utils/color"
-import SortingIcon from "../../fundamentals/icons/sorting-icon"
 import CustomersGroupsSummary from "../../molecules/customers-groups-summary"
 import IndeterminateCheckbox from "../../molecules/indeterminate-checkbox"
 import Table from "../../molecules/table"
@@ -14,7 +13,7 @@ export const CUSTOMER_GROUPS_TABLE_COLUMNS: Column<CustomerGroup>[] = [
   {
     Header: () => (
       <div className="flex items-center gap-1">
-        Title <SortingIcon size={16} />
+        Title
       </div>
     ),
     accessor: "name",
@@ -22,7 +21,7 @@ export const CUSTOMER_GROUPS_TABLE_COLUMNS: Column<CustomerGroup>[] = [
   {
     Header: () => (
       <div className="flex items-center gap-1">
-        Members <SortingIcon size={16} />
+        Members
       </div>
     ),
     id: "members",
@@ -47,7 +46,7 @@ export const CUSTOMER_GROUPS_CUSTOMERS_TABLE_COLUMNS: Column<Customer>[] = [
   {
     Header: () => (
       <div className="flex items-center gap-1">
-        Name <SortingIcon size={16} />
+        Name
       </div>
     ),
     id: "avatar",
@@ -58,7 +57,7 @@ export const CUSTOMER_GROUPS_CUSTOMERS_TABLE_COLUMNS: Column<Customer>[] = [
   {
     Header: () => (
       <div className="flex items-center gap-1">
-        Email <SortingIcon size={16} />
+        Email
       </div>
     ),
     accessor: "email",
@@ -80,7 +79,7 @@ export const CUSTOMER_GROUPS_CUSTOMERS_LIST_TABLE_COLUMNS: Column<Customer|any>[
     {
       Header: () => (
         <div className="flex items-center gap-1">
-          Name <SortingIcon size={16} />
+          Name
         </div>
       ),
       id: "avatar",
@@ -94,7 +93,7 @@ export const CUSTOMER_GROUPS_CUSTOMERS_LIST_TABLE_COLUMNS: Column<Customer|any>[
     {
       Header: () => (
         <div className="flex items-center gap-1">
-          Email <SortingIcon size={16} />
+          Email
         </div>
       ),
       accessor: "email",
@@ -128,7 +127,7 @@ export const CUSTOMER_GROUPS_CUSTOMERS_LIST_TABLE_COLUMNS: Column<Customer|any>[
     {
       accessor: "metadata.description",
       Header: "Description",
-      Cell: ({ cell: { value } }) => <div className="max-w-[300px] truncate">{value}</div>,
+      Cell: ({ cell: { value } }) => <div className="max-w-[300px] truncate" title={value}>{value}</div>,
     },
     {
       accessor: "orders",
