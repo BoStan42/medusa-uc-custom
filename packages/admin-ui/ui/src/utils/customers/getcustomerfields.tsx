@@ -42,8 +42,11 @@ const getCustomerFields = (customer: Customer | undefined) => {
                         name = 'Website'
                         value = <a href={String(value)} className="text-blue-60" target="_blank" rel="nofollow">{String(value)}</a>;
                         sort = 6
-                        
                         break;
+                    case "installer_distance":
+                        name = 'Ability to travel to customer site, km'
+                        sort = 5
+                        break
                     case 'description':
                         name = 'Description';
                         value = String(value).split('\n').map((v)=>
@@ -52,10 +55,26 @@ const getCustomerFields = (customer: Customer | undefined) => {
                         sort = 100;
                         break;
 
-                    // File
+                    // Exempt file
                     
                     case 'exempt_file':
                         name = 'Exempt document';
+                        value = <a href={String(value)} className="text-blue-60" target="_blank" rel="nofollow">Download</a>
+                        sort = 6;
+                        break;
+
+                    // License file
+
+                    case 'license_file':
+                        name = 'License document';
+                        value = <a href={String(value)} className="text-blue-60" target="_blank" rel="nofollow">Download</a>
+                        sort = 6;
+                        break;
+
+                    // File
+
+                    case 'file':
+                        name = 'Uploaded document';
                         value = <a href={String(value)} className="text-blue-60" target="_blank" rel="nofollow">Download</a>
                         sort = 6;
                         break;
