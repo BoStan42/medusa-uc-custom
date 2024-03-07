@@ -141,6 +141,15 @@ const useOrderTableColums = () => {
         },
       },
       {
+        Header: "GA",
+        accessor: "cart",
+        Cell: ({ cell: { value } }) => {
+          return (
+            <>{value?.context?.google_ads ? "+" : ""}</>
+          )
+        },
+      },
+      {
         Header: () => (
           <div className="text-right">{t("order-table-total", "Total")}</div>
         ),
