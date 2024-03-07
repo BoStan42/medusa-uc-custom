@@ -16,7 +16,7 @@ import { useOrderFilters } from "./use-order-filters"
 const DEFAULT_PAGE_SIZE = 15
 
 const defaultQueryProps = {
-  expand: "customer,shipping_address",
+  expand: "customer,shipping_address,cart",
   fields:
     "id,status,display_id,created_at,email,fulfillment_status,payment_status,total,currency_code,metadata",
 }
