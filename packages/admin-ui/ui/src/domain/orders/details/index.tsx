@@ -3,18 +3,19 @@ import {
   ClaimOrder,
   Fulfillment,
   LineItem,
-  Swap,
-} from "@medusajs/medusa"
+  Swap
+} from "@medusajs/medusa";
+import Medusa from "../../../services/api";
 import {
   useAdminCancelOrder,
   useAdminCapturePayment,
   useAdminOrder,
   useAdminRegion,
   useAdminReservations,
-  useAdminUpdateOrder,
-} from "medusa-react"
-import { useNavigate, useParams } from "react-router-dom"
-import OrderEditProvider, { OrderEditContext } from "../edit/context"
+  useAdminUpdateOrder
+} from "medusa-react";
+import { useNavigate, useParams } from "react-router-dom";
+import OrderEditProvider, { OrderEditContext } from "../edit/context";
 import {
   DisplayTotal,
   FormattedAddress,
@@ -22,58 +23,58 @@ import {
   FulfillmentStatusComponent,
   OrderStatusComponent,
   PaymentActionables,
-  PaymentStatusComponent,
-} from "./templates"
+  PaymentStatusComponent
+} from "./templates";
 
-import { capitalize } from "lodash"
-import moment from "moment"
-import { useEffect, useMemo, useState } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
-import { useTranslation } from "react-i18next"
-import Avatar from "../../../components/atoms/avatar"
-import BackButton from "../../../components/atoms/back-button"
-import Spacer from "../../../components/atoms/spacer"
-import Spinner from "../../../components/atoms/spinner"
-import Tooltip from "../../../components/atoms/tooltip"
-import WidgetContainer from "../../../components/extensions/widget-container"
-import Button from "../../../components/fundamentals/button"
-import DetailsIcon from "../../../components/fundamentals/details-icon"
-import CancelIcon from "../../../components/fundamentals/icons/cancel-icon"
-import ClipboardCopyIcon from "../../../components/fundamentals/icons/clipboard-copy-icon"
-import CornerDownRightIcon from "../../../components/fundamentals/icons/corner-down-right-icon"
-import DollarSignIcon from "../../../components/fundamentals/icons/dollar-sign-icon"
-import MailIcon from "../../../components/fundamentals/icons/mail-icon"
-import RefreshIcon from "../../../components/fundamentals/icons/refresh-icon"
-import TruckIcon from "../../../components/fundamentals/icons/truck-icon"
-import { ActionType } from "../../../components/molecules/actionables"
-import JSONView from "../../../components/molecules/json-view"
-import BodyCard from "../../../components/organisms/body-card"
-import RawJSON from "../../../components/organisms/raw-json"
-import Timeline from "../../../components/organisms/timeline"
-import { AddressType } from "../../../components/templates/address-form"
-import TransferOrdersModal from "../../../components/templates/transfer-orders-modal"
-import useClipboard from "../../../hooks/use-clipboard"
-import useImperativeDialog from "../../../hooks/use-imperative-dialog"
-import useNotification from "../../../hooks/use-notification"
-import useToggleState from "../../../hooks/use-toggle-state"
-import { useFeatureFlag } from "../../../providers/feature-flag-provider"
-import { useWidgets } from "../../../providers/widget-provider"
-import { isoAlpha2Countries } from "../../../utils/countries"
-import { getErrorMessage } from "../../../utils/error-messages"
-import extractCustomerName from "../../../utils/extract-customer-name"
-import { formatAmountWithSymbol } from "../../../utils/prices"
-import OrderEditModal from "../edit/modal"
-import AddressModal from "./address-modal"
-import CreateFulfillmentModal from "./create-fulfillment"
-import SummaryCard from "./detail-cards/summary"
-import EmailModal from "./email-modal"
-import MarkShippedModal from "./mark-shipped"
-import CreateRefundModal from "./refund"
-import { MEDUSA_BACKEND_URL_NOSLASH } from "../../../constants/medusa-backend-url"
-import DownloadIcon from "../../../components/fundamentals/icons/download-icon"
-import openUrlNewWindow from "../../../utils/open-link-new-window"
-import { useAccess } from "../../../providers/access-provider"
-import StatusDot from "../../../components/fundamentals/status-indicator"
+import { capitalize } from "lodash";
+import moment from "moment";
+import { useEffect, useMemo, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
+import Avatar from "../../../components/atoms/avatar";
+import BackButton from "../../../components/atoms/back-button";
+import Spacer from "../../../components/atoms/spacer";
+import Spinner from "../../../components/atoms/spinner";
+import Tooltip from "../../../components/atoms/tooltip";
+import WidgetContainer from "../../../components/extensions/widget-container";
+import Button from "../../../components/fundamentals/button";
+import DetailsIcon from "../../../components/fundamentals/details-icon";
+import CancelIcon from "../../../components/fundamentals/icons/cancel-icon";
+import ClipboardCopyIcon from "../../../components/fundamentals/icons/clipboard-copy-icon";
+import CornerDownRightIcon from "../../../components/fundamentals/icons/corner-down-right-icon";
+import DollarSignIcon from "../../../components/fundamentals/icons/dollar-sign-icon";
+import MailIcon from "../../../components/fundamentals/icons/mail-icon";
+import RefreshIcon from "../../../components/fundamentals/icons/refresh-icon";
+import TruckIcon from "../../../components/fundamentals/icons/truck-icon";
+import { ActionType } from "../../../components/molecules/actionables";
+import JSONView from "../../../components/molecules/json-view";
+import BodyCard from "../../../components/organisms/body-card";
+import RawJSON from "../../../components/organisms/raw-json";
+import Timeline from "../../../components/organisms/timeline";
+import { AddressType } from "../../../components/templates/address-form";
+import TransferOrdersModal from "../../../components/templates/transfer-orders-modal";
+import useClipboard from "../../../hooks/use-clipboard";
+import useImperativeDialog from "../../../hooks/use-imperative-dialog";
+import useNotification from "../../../hooks/use-notification";
+import useToggleState from "../../../hooks/use-toggle-state";
+import { useFeatureFlag } from "../../../providers/feature-flag-provider";
+import { useWidgets } from "../../../providers/widget-provider";
+import { isoAlpha2Countries } from "../../../utils/countries";
+import { getErrorMessage } from "../../../utils/error-messages";
+import extractCustomerName from "../../../utils/extract-customer-name";
+import { formatAmountWithSymbol } from "../../../utils/prices";
+import OrderEditModal from "../edit/modal";
+import AddressModal from "./address-modal";
+import CreateFulfillmentModal from "./create-fulfillment";
+import SummaryCard from "./detail-cards/summary";
+import EmailModal from "./email-modal";
+import MarkShippedModal from "./mark-shipped";
+import CreateRefundModal from "./refund";
+import { MEDUSA_BACKEND_URL_NOSLASH } from "../../../constants/medusa-backend-url";
+import DownloadIcon from "../../../components/fundamentals/icons/download-icon";
+import openUrlNewWindow from "../../../utils/open-link-new-window";
+import { useAccess } from "../../../providers/access-provider";
+import StatusDot from "../../../components/fundamentals/status-indicator";
 
 type OrderDetailFulfillment = {
   title: string
@@ -83,20 +84,22 @@ type OrderDetailFulfillment = {
   claim?: ClaimOrder
 }
 
+const MEXICO_COUNTRY_CODE = "MX";
+
 const gatherAllFulfillments = (order) => {
   if (!order) {
-    return []
+    return [];
   }
 
-  const all: OrderDetailFulfillment[] = []
+  const all: OrderDetailFulfillment[] = [];
 
   order.fulfillments.forEach((f, index) => {
     all.push({
       title: `Fulfillment #${index + 1}`,
       type: "default",
-      fulfillment: f,
-    })
-  })
+      fulfillment: f
+    });
+  });
 
   if (order.claims?.length) {
     order.claims.forEach((claim) => {
@@ -106,11 +109,11 @@ const gatherAllFulfillments = (order) => {
             title: `Claim fulfillment #${index + 1}`,
             type: "claim",
             fulfillment,
-            claim,
-          })
-        })
+            claim
+          });
+        });
       }
-    })
+    });
   }
 
   if (order.swaps?.length) {
@@ -121,76 +124,89 @@ const gatherAllFulfillments = (order) => {
             title: `Swap fulfillment #${index + 1}`,
             type: "swap",
             fulfillment,
-            swap,
-          })
-        })
+            swap
+          });
+        });
       }
-    })
+    });
   }
 
-  return all
-}
+  return all;
+};
 
 const OrderDetails = () => {
-  const { id } = useParams()
-  const { t } = useTranslation()
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const [userTaxId, setUserTaxId] = useState<string | null>(null);
 
-  const dialog = useImperativeDialog()
+  const dialog = useImperativeDialog();
 
   const [addressModal, setAddressModal] = useState<null | {
     address?: Address | null
     type: AddressType
-  }>(null)
+  }>(null);
 
   const [emailModal, setEmailModal] = useState<null | {
     email: string
-  }>(null)
+  }>(null);
 
   const { state: showTransferOrderModal, toggle: toggleTransferOrderModal } =
-    useToggleState()
+    useToggleState();
 
-  const [showFulfillment, setShowFulfillment] = useState(false)
-  const [showRefund, setShowRefund] = useState(false)
-  const [fullfilmentToShip, setFullfilmentToShip] = useState(null)
+  const [showFulfillment, setShowFulfillment] = useState(false);
+  const [showRefund, setShowRefund] = useState(false);
+  const [fullfilmentToShip, setFullfilmentToShip] = useState(null);
 
-  const { order, isLoading } = useAdminOrder(id!)
+  const { order, isLoading } = useAdminOrder(id!);
 
-  const capturePayment = useAdminCapturePayment(id!)
-  const cancelOrder = useAdminCancelOrder(id!)
+  const capturePayment = useAdminCapturePayment(id!);
+  const cancelOrder = useAdminCancelOrder(id!);
 
   const {
     state: addressModalState,
     close: closeAddressModal,
-    open: openAddressModal,
-  } = useToggleState()
+    open: openAddressModal
+  } = useToggleState();
 
-  const { mutate: updateOrder } = useAdminUpdateOrder(id!)
+  const { mutate: updateOrder } = useAdminUpdateOrder(id!);
 
   const { region } = useAdminRegion(order?.region_id!, {
-    enabled: !!order?.region_id,
-  })
-  const { isFeatureEnabled } = useFeatureFlag()
+    enabled: !!order?.region_id
+  });
+  const { isFeatureEnabled } = useFeatureFlag();
   const inventoryEnabled = useMemo(() => {
-    return isFeatureEnabled("inventoryService")
-  }, [isFeatureEnabled])
+    return isFeatureEnabled("inventoryService");
+  }, [isFeatureEnabled]);
 
   const { reservations, refetch: refetchReservations } = useAdminReservations(
     {
-      line_item_id: order?.items.map((item) => item.id),
+      line_item_id: order?.items.map((item) => item.id)
     },
     {
-      enabled: inventoryEnabled,
+      enabled: inventoryEnabled
     }
-  )
+  );
 
   useEffect(() => {
     if (inventoryEnabled) {
-      refetchReservations()
+      refetchReservations();
     }
-  }, [inventoryEnabled, refetchReservations])
+  }, [inventoryEnabled, refetchReservations]);
 
-  const navigate = useNavigate()
-  const notification = useNotification()
+  useEffect(() => {
+    if (order?.cart_id && order?.shipping_address?.country_code?.toUpperCase() === MEXICO_COUNTRY_CODE) {
+      const getCartData = async () => {
+        const data = await Medusa.carts.retrieve(order?.cart_id);
+        if (data?.data?.cart?.context?.metadata?.userTaxId) {
+          setUserTaxId(data?.data?.cart?.context?.metadata?.userTaxId);
+        }
+      };
+      getCartData();
+    }
+  }, [order?.cart_id]);
+
+  const navigate = useNavigate();
+  const notification = useNotification();
 
   const [, handleCopy] = useClipboard(`${order?.display_id!}`, {
     successDuration: 5500,
@@ -199,8 +215,8 @@ const OrderDetails = () => {
         t("details-success", "Success"),
         t("details-order-id-copied", "Order ID copied"),
         "success"
-      ),
-  })
+      )
+  });
 
   const [, handleCopyEmail] = useClipboard(order?.email!, {
     successDuration: 5500,
@@ -209,14 +225,14 @@ const OrderDetails = () => {
         t("details-success", "Success"),
         t("details-email-copied", "Email copied"),
         "success"
-      ),
-  })
+      )
+  });
 
   // @ts-ignore
-  useHotkeys("esc", () => navigate("/a/orders"))
-  useHotkeys("command+i", handleCopy)
+  useHotkeys("esc", () => navigate("/a/orders"));
+  useHotkeys("command+i", handleCopy);
 
-  const { getWidgets } = useWidgets()
+  const { getWidgets } = useWidgets();
 
   const handleDeleteOrder = async () => {
     const shouldDelete = await dialog({
@@ -227,12 +243,12 @@ const OrderDetails = () => {
       ),
       extraConfirmation: true,
       entityName: t("order-details-display-id", "order #{{display_id}}", {
-        display_id: order.display_id,
-      }),
-    })
+        display_id: order.display_id
+      })
+    });
 
     if (!shouldDelete) {
-      return
+      return;
     }
 
     return cancelOrder.mutate(undefined, {
@@ -250,34 +266,34 @@ const OrderDetails = () => {
           t("details-error", "Error"),
           getErrorMessage(err),
           "error"
-        ),
-    })
-  }
+        )
+    });
+  };
 
-  const allFulfillments = gatherAllFulfillments(order)
+  const allFulfillments = gatherAllFulfillments(order);
 
   const customerActionables: ActionType[] = [];
 
-  const {checkAccess, loaded: accessLoaded} = useAccess();
-    const [customersAccess, setCustomersAccess] = useState(false);
+  const { checkAccess, loaded: accessLoaded } = useAccess();
+  const [customersAccess, setCustomersAccess] = useState(false);
 
-    useEffect(()=>{
-      setCustomersAccess(checkAccess('/customers'));
-    },[accessLoaded])
-  
-  if(customersAccess) {
+  useEffect(() => {
+    setCustomersAccess(checkAccess("/customers"));
+  }, [accessLoaded]);
+
+  if (customersAccess) {
     customerActionables.push(
       {
         label: t("details-go-to-customer", "Go to Customer"),
         icon: <DetailsIcon size={"20"} />,
-        onClick: () => navigate(`/a/customers/${order?.customer.id}`),
+        onClick: () => navigate(`/a/customers/${order?.customer.id}`)
       },
       {
         label: t("details-transfer-ownership", "Transfer ownership"),
         icon: <RefreshIcon size={"20"} />,
-        onClick: () => toggleTransferOrderModal(),
-      },
-    )
+        onClick: () => toggleTransferOrderModal()
+      }
+    );
   }
 
   customerActionables.push({
@@ -286,11 +302,11 @@ const OrderDetails = () => {
     onClick: () => {
       setAddressModal({
         address: order?.shipping_address,
-        type: AddressType.SHIPPING,
-      })
-      openAddressModal()
-    },
-  })
+        type: AddressType.SHIPPING
+      });
+      openAddressModal();
+    }
+  });
 
   customerActionables.push({
     label: t("details-edit-billing-address", "Edit Billing Address"),
@@ -298,11 +314,11 @@ const OrderDetails = () => {
     onClick: () => {
       setAddressModal({
         address: order?.billing_address,
-        type: AddressType.BILLING,
-      })
-      openAddressModal()
-    },
-  })
+        type: AddressType.BILLING
+      });
+      openAddressModal();
+    }
+  });
 
   if (order?.email) {
     customerActionables.push({
@@ -310,10 +326,10 @@ const OrderDetails = () => {
       icon: <MailIcon size={"20"} />,
       onClick: () => {
         setEmailModal({
-          email: order?.email,
-        })
-      },
-    })
+          email: order?.email
+        });
+      }
+    });
   }
 
   if (!order && isLoading) {
@@ -321,19 +337,19 @@ const OrderDetails = () => {
       <div className="flex h-full w-full items-center justify-center">
         <Spinner size="small" variant="secondary" />
       </div>
-    )
+    );
   }
 
   if (!order && !isLoading) {
-    navigate("/404")
+    navigate("/404");
   }
 
   const anyItemsToFulfil = order.items.some(
     (item: LineItem) => item.quantity > (item.fulfilled_quantity ?? 0)
-  )
+  );
 
-  const invoiceUrl = `${MEDUSA_BACKEND_URL_NOSLASH}/admin/invoice/${order?.id}/invoice-${order.display_id}.pdf`
-  const packingUrl = `${MEDUSA_BACKEND_URL_NOSLASH}/admin/packing/${order?.id}/packing-slip-${order.display_id}.pdf`
+  const invoiceUrl = `${MEDUSA_BACKEND_URL_NOSLASH}/admin/invoice/${order?.id}/invoice-${order.display_id}.pdf`;
+  const packingUrl = `${MEDUSA_BACKEND_URL_NOSLASH}/admin/packing/${order?.id}/packing-slip-${order.display_id}.pdf`;
 
   return (
     <div>
@@ -354,7 +370,7 @@ const OrderDetails = () => {
                   variant="secondary"
                   size="small"
                   onClick={() => {
-                    openUrlNewWindow(invoiceUrl)
+                    openUrlNewWindow(invoiceUrl);
                   }}
                   className="min-w-[140px]"
                 >
@@ -370,7 +386,7 @@ const OrderDetails = () => {
                   variant="secondary"
                   size="small"
                   onClick={() => {
-                    openUrlNewWindow(packingUrl)
+                    openUrlNewWindow(packingUrl);
                   }}
                   className="min-w-[140px]"
                 >
@@ -396,7 +412,7 @@ const OrderDetails = () => {
                     widget={widget}
                     entity={order}
                   />
-                )
+                );
               })}
             </div>
             <div className="flex space-x-4">
@@ -501,7 +517,7 @@ const OrderDetails = () => {
                                 -
                                 {formatAmountWithSymbol({
                                   amount: payment.amount_refunded,
-                                  currency: order.currency_code,
+                                  currency: order.currency_code
                                 })}
                               </div>
                               <div className="inter-small-regular text-grey-50">
@@ -520,7 +536,7 @@ const OrderDetails = () => {
                         <div className="inter-small-semibold text-grey-90 mr-3">
                           {formatAmountWithSymbol({
                             amount: order.paid_total - order.refunded_total,
-                            currency: order.currency_code,
+                            currency: order.currency_code
                           })}
                         </div>
                         <div className="inter-small-regular text-grey-50">
@@ -601,7 +617,7 @@ const OrderDetails = () => {
                             {
                               isoAlpha2Countries[
                                 order.shipping_address.country_code?.toUpperCase()
-                              ]
+                                ]
                             }
                           </span>
                         )}
@@ -617,6 +633,16 @@ const OrderDetails = () => {
                           <span>{order.shipping_address?.phone || ""}</span>
                         </div>
                       </div>
+                      {userTaxId && (
+                        <div className="flex flex-col pl-6">
+                          <div className="inter-small-regular text-grey-50 mb-1">
+                            Tax ID(RFC)
+                          </div>
+                          <div className="inter-small-regular flex flex-col">
+                            <span>{userTaxId}</span>
+                          </div>
+                        </div>
+                      )}
                       <FormattedAddress
                         title={t("details-shipping", "Shipping")}
                         addr={order.shipping_address}
@@ -635,38 +661,47 @@ const OrderDetails = () => {
                 >
                   <div className="inter-small-regular">
                     {order.metadata?._odoo_order_create ?
-                    <div className="flex flex-col gap-1">
-                      
-                      {!!order.metadata?._odoo_order_create?._date &&
-                        <div><span className="text-grey-50">Sync date:</span> {order.metadata._odoo_order_create._date}</div>
-                      }
-                      
-                      {!!order.metadata?._odoo_order_create?._odoo_order_id &&
-                        <div><span className="text-grey-50">Odoo Sales Order:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=sale.order&id="+order.metadata._odoo_order_create._odoo_order_id} className="text-blue-60" target="_blank" rel="nofollow">{order.metadata._odoo_order_create._odoo_order_name ? order.metadata._odoo_order_create._odoo_order_name : 'View'}</a></div>
-                      }
+                      <div className="flex flex-col gap-1">
 
-                      {!!order.metadata?._odoo_order_create?._odoo_delivery_order_id &&
-                        <div><span className="text-grey-50">Odoo Delivery Order:</span> <a href={"https://united-chargers-inc.odoo.com/web#model=stock.picking&id="+order.metadata._odoo_order_create._odoo_delivery_order_id} className="text-blue-60" target="_blank" rel="nofollow">{order.metadata._odoo_order_create._odoo_delivery_order_name ? order.metadata._odoo_order_create._odoo_delivery_order_name : order.metadata._odoo_order_create._odoo_delivery_order_id}</a></div>
-                      }
-                      
-                      {!!order.metadata?._odoo_order_create?._errors?.length &&
-                      <div className="mt-2">
-                        {order.metadata?._odoo_order_create?._errors?.map(e=>
-                          <div className="mt-1">
-                            <StatusDot
-                              title={e}
-                              variant="danger"
-                            />
+                        {!!order.metadata?._odoo_order_create?._date &&
+                          <div><span
+                            className="text-grey-50">Sync date:</span> {order.metadata._odoo_order_create._date}</div>
+                        }
+
+                        {!!order.metadata?._odoo_order_create?._odoo_order_id &&
+                          <div><span className="text-grey-50">Odoo Sales Order:</span> <a
+                            href={"https://united-chargers-inc.odoo.com/web#model=sale.order&id=" + order.metadata._odoo_order_create._odoo_order_id}
+                            className="text-blue-60" target="_blank"
+                            rel="nofollow">{order.metadata._odoo_order_create._odoo_order_name ? order.metadata._odoo_order_create._odoo_order_name : "View"}</a>
                           </div>
-                        )}
-                      </div>
-                      }
+                        }
 
-                    </div>
-                    :
-                    <div>
-                      Not synced
-                    </div>
+                        {!!order.metadata?._odoo_order_create?._odoo_delivery_order_id &&
+                          <div><span className="text-grey-50">Odoo Delivery Order:</span> <a
+                            href={"https://united-chargers-inc.odoo.com/web#model=stock.picking&id=" + order.metadata._odoo_order_create._odoo_delivery_order_id}
+                            className="text-blue-60" target="_blank"
+                            rel="nofollow">{order.metadata._odoo_order_create._odoo_delivery_order_name ? order.metadata._odoo_order_create._odoo_delivery_order_name : order.metadata._odoo_order_create._odoo_delivery_order_id}</a>
+                          </div>
+                        }
+
+                        {!!order.metadata?._odoo_order_create?._errors?.length &&
+                          <div className="mt-2">
+                            {order.metadata?._odoo_order_create?._errors?.map(e =>
+                              <div className="mt-1">
+                                <StatusDot
+                                  title={e}
+                                  variant="danger"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        }
+
+                      </div>
+                      :
+                      <div>
+                        Not synced
+                      </div>
                     }
                   </div>
                 </BodyCard>
@@ -680,7 +715,7 @@ const OrderDetails = () => {
                         widget={widget}
                         entity={order}
                       />
-                    )
+                    );
                   })}
                 </div>
                 <RawJSON
@@ -713,7 +748,8 @@ const OrderDetails = () => {
                 orderToFulfill={order as any}
                 handleCancel={() => setShowFulfillment(false)}
                 orderId={order.id}
-                onComplete={inventoryEnabled ? refetchReservations : () => {}}
+                onComplete={inventoryEnabled ? refetchReservations : () => {
+                }}
               />
             )}
             {showRefund && (
@@ -744,7 +780,7 @@ const OrderDetails = () => {
         )}
       </OrderEditProvider>
     </div>
-  )
-}
+  );
+};
 
-export default OrderDetails
+export default OrderDetails;
