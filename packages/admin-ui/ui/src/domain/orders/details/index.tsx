@@ -194,14 +194,8 @@ const OrderDetails = () => {
   }, [inventoryEnabled, refetchReservations]);
 
   useEffect(() => {
-    if (order?.cart_id && order?.shipping_address?.country_code?.toUpperCase() === MEXICO_COUNTRY_CODE) {
-      const getCartData = async () => {
-        const data = await Medusa.carts.retrieve(order?.cart_id);
-        if (data?.data?.cart?.context?.metadata?.userTaxId) {
-          setUserTaxId(data?.data?.cart?.context?.metadata?.userTaxId);
-        }
-      };
-      getCartData();
+    if (order?.cart_id && order?.shipping_address?.country_code?.toUpperCase() === MEXICO_COUNTRY_CODE && order?.cart?.context?.metadata?.userTaxId) {
+      setUserTaxId(order.cart.context.metadata.userTaxId);
     }
   }, [order?.cart_id]);
 
@@ -636,9 +630,9 @@ const OrderDetails = () => {
                       {userTaxId && (
                         <div className="flex flex-col pl-6">
                           <div className="inter-small-regular text-grey-50 mb-1">
-                            Tax ID(RFC)
+                            Tax ID (RFC)
                           </div>
-                          <div className="inter-small-regular flex flex-col">
+                          <div className="inter-small-regular flex flex-col break-all">
                             <span>{userTaxId}</span>
                           </div>
                         </div>
@@ -705,6 +699,17 @@ const OrderDetails = () => {
                     }
                   </div>
                 </BodyCard>
+
+                {!!order?.cart?.context?.google_ads && (
+                  <BodyCard
+                    className={"h-auto min-h-0 w-full"}
+                    title="Google ads"
+                  >
+                    <div className="inter-small-regular break-all">
+                      <span className="text-grey-50">ID:</span> <>{order.cart.context.google_ads}</>
+                    </div>
+                  </BodyCard>
+                )}
 
                 <div>
                   {getWidgets("order.details.after").map((widget, i) => {

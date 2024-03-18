@@ -725,11 +725,5 @@ export default {
       const path = `/admin/users/${userId}`
       return medusaRequest("DELETE", path)
     },
-  },
-  carts: {
-    retrieve(id) {
-      const path = `/admin/carts/${id}`;
-      return medusaRequest("GET", path)
-    }
   }
 }
