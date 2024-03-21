@@ -20,6 +20,7 @@ import clsx from "clsx"
 import OrderResults from "./results/order-results"
 import CrossIcon from "../../fundamentals/icons/cross-icon"
 import Tooltip from "../../atoms/tooltip"
+import TrashIcon from "../../fundamentals/icons/trash-icon";
 
 const getTotal = (...lists) =>
   lists.reduce((total, list = []) => total + list.length, 0)
@@ -103,7 +104,14 @@ const SearchModal = ({ handleClose }) => {
                   onClick={handleClear}
                   content={t("search-modal-clear-search", "Clear search")}
                 >
-                  <CrossIcon className="text-grey-50 flex" />
+                  <TrashIcon className="text-grey-50 flex cursor-pointer" />
+                </Tooltip>
+                <Tooltip
+                  className="bg-grey-0"
+                  onClick={handleClose}
+                  content={t("edit-condition-close", "Close search")}
+                >
+                  <CrossIcon className="text-grey-50 flex cursor-pointer" />
                 </Tooltip>
               </div>
               <KeyboardShortcuts className="mt-xlarge px-xlarge text-grey-40 inter-small-regular flex items-center gap-x-3" />

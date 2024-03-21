@@ -554,6 +554,7 @@ const OrderDetails = () => {
                       <Button
                         variant="secondary"
                         size="small"
+                        disabled={order.payment_status === "refunded"}
                         onClick={() => setShowFulfillment(true)}
                       >
                         {t("details-create-fulfillment", "Create Fulfillment")}
