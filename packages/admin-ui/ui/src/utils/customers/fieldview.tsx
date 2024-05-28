@@ -1,12 +1,13 @@
 type FieldViewType = {
     title: string,
-    children?: any
+    full?: boolean,
+    children?: any,
 }
 
-const FieldView = ({title, children}: FieldViewType) => {
+const FieldView = ({title, full, children}: FieldViewType) => {
 
     return(
-        <div className="flex flex-col items-start flex-wrap">
+        <div className={"flex flex-col items-start flex-wrap" + (full ? " col-span-2" : "")}>
             <div className="text-gray-500 text-xs">{title}:</div>
             <div className="break-all">{children}</div>
         </div>

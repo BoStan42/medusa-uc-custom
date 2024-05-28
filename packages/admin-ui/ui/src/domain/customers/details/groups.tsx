@@ -176,7 +176,7 @@ const CustomersGroupsWidget = ({customer}: CustomersGroupsWidgetType) => {
           {!!fields.length &&
             <div className="mt-6 grid grid-cols-2 gap-4">
               {fields.map(f=>
-                <FieldView title={f.name} key={f.id} islink={f.islink}>{f.value}</FieldView>
+                <FieldView title={f.name} key={f.id} full={f.full}>{f.value}</FieldView>
               )}
             </div>
           }

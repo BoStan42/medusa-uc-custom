@@ -4,7 +4,17 @@ export type CustomerFieldsType = {
     id: string,
     name: string,
     sort: number,
-    value: any
+    value: any,
+    full: boolean,
+}
+
+export const customersTypes = [
+    {value: "", label: "Customers"},
+    {value: "partners", label: "Partners"},
+];
+
+const usFirst = (str: string) => {
+    return str ? ((str.charAt(0)?.toUpperCase() ?? "") + (str.slice(1) ?? "")) : str;
 }
 
 const getCustomerFields = (customer: Customer | undefined) => {
@@ -18,6 +28,7 @@ const getCustomerFields = (customer: Customer | undefined) => {
                 let name = '';
                 let value = customer.metadata[i];
                 let sort = 1;
+                let full = false;
 
                 switch(i) {
                     
@@ -25,10 +36,7 @@ const getCustomerFields = (customer: Customer | undefined) => {
 
                     case 'type':
                         name = 'Customer type on registration';
-                        switch(value) {
-                            case 'resellers': value = 'Resellers'; break;
-                            case 'installators': value = 'Installators'; break;
-                        }
+                        value = usFirst(String(value));
                         sort = 1;
                         break;
                     
@@ -53,6 +61,7 @@ const getCustomerFields = (customer: Customer | undefined) => {
                             <div className="break-words">{v ? v : ''}</div>
                         )
                         sort = 100;
+                        full = true;
                         break;
 
                     // Exempt file
@@ -86,7 +95,8 @@ const getCustomerFields = (customer: Customer | undefined) => {
                         id: i,
                         name: name,
                         value: value as string,
-                        sort: sort
+                        sort: sort,
+                        full: full,
                     });
             }
         }
