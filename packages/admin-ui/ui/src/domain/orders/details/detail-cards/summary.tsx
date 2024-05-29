@@ -158,12 +158,14 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ order, reservations }) => {
         onClick: showModal,
       })
     }
+    /*
     if (isFeatureEnabled("inventoryService") && !allItemsReserved) {
       actionables.push({
         label: t("detail-cards-allocate", "Allocate"),
         onClick: showReservationModal,
       })
     }
+    */
     return actionables
   }, [showModal, isFeatureEnabled, showReservationModal, allItemsReserved])
 
@@ -198,8 +200,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ order, reservations }) => {
           />
         )
       }
-      actionables={actionables}
       */
+      actionables={actionables}
     >
       <div className="mt-6">
         {order.items?.map((item, i) => (

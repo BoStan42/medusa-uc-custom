@@ -390,6 +390,7 @@ function OrderEditModal(props: OrderEditModalProps) {
         </Modal.Content>
         <Modal.Footer>
           <div className="flex w-full items-center justify-end gap-2">
+            <div className="text-red-500 mr-2">You need to manually sync all changes to ODOO!</div>
             <Button
               variant="secondary"
               size="small"
