@@ -466,6 +466,16 @@ const OrderDetails = () => {
                           .join(", ")}
                       </div>
                     </div>
+                    {!!order?.cart?.context?.referral_code && (
+                      <div className="flex flex-col pl-6">
+                        <div className="inter-smaller-regular text-grey-50 mb-1">
+                          Referral
+                        </div>
+                        <div className="text-green-600">
+                          <>{order.cart.context.referral_code}</>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </BodyCard>
 

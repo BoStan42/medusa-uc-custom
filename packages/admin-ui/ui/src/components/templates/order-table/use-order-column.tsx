@@ -133,19 +133,28 @@ const useOrderTableColums = () => {
         Cell: ({ cell: { value } }) => {
           return (
             <div className={value?._odoo_order_create?._errors?.length ? "text-red-600" : ""}>
-              <span title="Sales Order">{value?._odoo_order_create?._odoo_order_id ? "S" : "-"}</span>
-              /
-              <span title="Delivery Order">{value?._odoo_order_create?._odoo_delivery_order_id ? "D" : "-"}</span>
+              <span title="Sales Order">{value?._odoo_order_create?._odoo_order_id ? "S" : <span className="text-gray-400">-</span>}</span>
+              <span className="text-gray-400">/</span>
+              <span title="Delivery Order">{value?._odoo_order_create?._odoo_delivery_order_id ? "D" : <span className="text-gray-400">-</span>}</span>
             </div>
           )
         },
       },
       {
         Header: "GA",
-        accessor: "cart",
+        accessor: "cart.context.google_ads",
         Cell: ({ cell: { value } }) => {
           return (
-            <>{value?.context?.google_ads ? "+" : ""}</>
+            <>{value ? "+" : <span className="text-gray-400">-</span>}</>
+          )
+        },
+      },
+      {
+        Header: "Ref",
+        accessor: "cart.context.referral_code",
+        Cell: ({ cell: { value } }) => {
+          return (
+            <>{value ? "+" : <span className="text-gray-400">-</span>}</>
           )
         },
       },
