@@ -119,6 +119,15 @@ const SalesReportModal: React.FC<ExportModalProps> = ({
             >
               Shipping report
             </Button>
+            <Button
+              loading={loading}
+              disabled={loading}
+              variant="primary"
+              size="small"
+              onClick={()=>getReport('referrals-report')}
+            >
+              Referrals report
+            </Button>
           </div>
         </Modal.Footer>
       </Modal.Body>
