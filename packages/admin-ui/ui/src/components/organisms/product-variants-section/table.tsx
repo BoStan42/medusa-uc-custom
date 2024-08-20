@@ -62,11 +62,10 @@ export const useVariantsTableColumns = (inventoryIsEnabled = false) => {
         accessor: "sku",
         maxWidth: 264,
         Cell: ({ cell }) => {
-          return cell.value ? (
-            cell.value
-          ) : (
+          
+          return cell.row?.values?.sku ||
+            cell.value ||
             <span className="text-grey-50">-</span>
-          )
         },
       },
       {
@@ -75,11 +74,9 @@ export const useVariantsTableColumns = (inventoryIsEnabled = false) => {
         accessor: "ean",
         maxWidth: 264,
         Cell: ({ cell }) => {
-          return cell.value ? (
-            cell.value
-          ) : (
+          return cell.row?.values?.ean ||
+            cell.value ||
             <span className="text-grey-50">-</span>
-          )
         },
       },
       ...quantityColumns,
@@ -90,6 +87,7 @@ export const useVariantsTableColumns = (inventoryIsEnabled = false) => {
 }
 
 const VariantsTable = ({ variants, actions }: Props) => {
+  console.log("***", variants);
   const { t } = useTranslation()
   const { isFeatureEnabled } = useFeatureFlag()
   const hasInventoryService = isFeatureEnabled("inventoryService")
