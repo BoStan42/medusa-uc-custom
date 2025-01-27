@@ -104,10 +104,6 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
 
   const items = 'items' in orderToFulfill ? orderToFulfill.items : orderToFulfill.additional_items;
 
-  const itemsToDisplay = items.filter(item => {
-    return item.returned_quantity && item.returned_quantity < item.quantity;
-  });
-
   const createOrderFulfillment = useAdminCreateFulfillment(orderId);
   const createSwapFulfillment = useAdminFulfillSwap(orderId);
   const createClaimFulfillment = useAdminFulfillClaim(orderId);
@@ -270,7 +266,7 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
                 )}
               </span>
               <CreateFulfillmentItemsTable
-                items={itemsToDisplay}
+                items={items}
                 quantities={quantities}
                 setQuantities={setQuantities}
                 locationId={locationSelectValue.value}
