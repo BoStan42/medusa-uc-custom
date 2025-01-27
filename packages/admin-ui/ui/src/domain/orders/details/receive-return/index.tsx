@@ -249,7 +249,6 @@ export const ReceiveReturnMenu = ({ order, returnRequest, onClose }: Props) => {
           }),
           'success',
         );
-        sendEmailNotification(order.id);
         // We need to refetch the order to get the updated state
         refetch();
 
