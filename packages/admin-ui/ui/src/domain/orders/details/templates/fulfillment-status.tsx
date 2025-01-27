@@ -15,6 +15,8 @@ export const FulfillmentStatusComponent = ({ status }) => {
       return <StatusDot title={t('templates-returned', 'Returned')} variant="danger" />;
     case 'partially_canceled':
       return <StatusDot title={t('templates-partially-canceled', 'Partially canceled')} variant="warning" />;
+    case 'partially_returned':
+      return <StatusDot title={t('templates-partially-returned', 'Partially returned')} variant="warning" />;
     case 'partially_fulfilled':
       return <StatusDot title={t('templates-partially-fulfilled', 'Partially fulfilled')} variant="warning" />;
     case 'requires_action':

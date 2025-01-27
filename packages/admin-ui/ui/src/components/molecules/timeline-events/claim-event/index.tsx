@@ -100,7 +100,6 @@ const Claim = ({ event }: Props) => {
               order={event.order}
               returnRequest={event.claim.return_order}
             />
-            <div className="mr-2 text-red-500">You need to manually sync all changes to ODOO!</div>
           </>
         )}
         {stateFulfillMenu && (
