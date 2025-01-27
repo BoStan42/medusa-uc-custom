@@ -1240,6 +1240,7 @@
   "templates-shipped": "Expédié",
   "templates-fulfilled": "Satisfait",
   "templates-canceled": "Annulé",
+  "templates-partially-canceled": "Partiellement annulée",
   "templates-partially-fulfilled": "Partiellement satisfait",
   "templates-fulfillment-status-requires-action": "Requiert une action",
   "templates-awaiting-fulfillment": "En attente de satisfaction",

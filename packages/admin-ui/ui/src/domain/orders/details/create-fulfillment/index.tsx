@@ -4,79 +4,71 @@ import {
   AdminPostOrdersOrderSwapsSwapFulfillmentsReq,
   ClaimOrder,
   Order,
-  Swap
-} from "@medusajs/medusa";
-import { useTranslation } from "react-i18next";
-import CreateFulfillmentItemsTable, {
-  getFulfillableQuantity
-} from "./item-table";
-import Metadata, {
-  MetadataField
-} from "../../../../components/organisms/metadata";
-import React, { useEffect, useState } from "react";
+  Swap,
+} from '@medusajs/medusa';
+import { useTranslation } from 'react-i18next';
+import CreateFulfillmentItemsTable, { getFulfillableQuantity } from './item-table';
+import Metadata, { MetadataField } from '../../../../components/organisms/metadata';
+import React, { useEffect, useState } from 'react';
 import {
   useAdminCreateFulfillment,
   useAdminFulfillClaim,
   useAdminFulfillSwap,
-  useAdminStockLocations
-} from "medusa-react";
+  useAdminStockLocations,
+} from 'medusa-react';
 
-import Button from "../../../../components/fundamentals/button";
-import CrossIcon from "../../../../components/fundamentals/icons/cross-icon";
-import FeatureToggle from "../../../../components/fundamentals/feature-toggle";
-import FocusModal from "../../../../components/molecules/modal/focus-modal";
-import Select from "../../../../components/molecules/select/next-select/select";
-import Switch from "../../../../components/atoms/switch";
-import { getErrorMessage } from "../../../../utils/error-messages";
-import { useFeatureFlag } from "../../../../providers/feature-flag-provider";
-import useNotification from "../../../../hooks/use-notification";
+import Button from '../../../../components/fundamentals/button';
+import CrossIcon from '../../../../components/fundamentals/icons/cross-icon';
+import FeatureToggle from '../../../../components/fundamentals/feature-toggle';
+import FocusModal from '../../../../components/molecules/modal/focus-modal';
+import Select from '../../../../components/molecules/select/next-select/select';
+import Switch from '../../../../components/atoms/switch';
+import { getErrorMessage } from '../../../../utils/error-messages';
+import { useFeatureFlag } from '../../../../providers/feature-flag-provider';
+import useNotification from '../../../../hooks/use-notification';
 
 type CreateFulfillmentModalProps = {
-  handleCancel: () => void
-  address?: object
-  email?: string
-  orderToFulfill: Order | ClaimOrder | Swap
-  orderId: string
-  onComplete?: () => void
-}
+  handleCancel: () => void;
+  address?: object;
+  email?: string;
+  orderToFulfill: Order | ClaimOrder | Swap;
+  orderId: string;
+  onComplete?: () => void;
+};
 
 const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
-                                                                         handleCancel,
-                                                                         orderToFulfill,
-                                                                         orderId,
-                                                                         onComplete
-                                                                       }) => {
+  handleCancel,
+  orderToFulfill,
+  orderId,
+  onComplete,
+}) => {
   const { t } = useTranslation();
   const { isFeatureEnabled } = useFeatureFlag();
-  const isLocationFulfillmentEnabled =
-    isFeatureEnabled("inventoryService") &&
-    isFeatureEnabled("stockLocationService");
+  const isLocationFulfillmentEnabled = isFeatureEnabled('inventoryService') && isFeatureEnabled('stockLocationService');
   const [quantities, setQuantities] = useState<Record<string, number>>(
-    "items" in orderToFulfill
+    'items' in orderToFulfill
       ? (orderToFulfill as Order).items.reduce((acc, next) => {
-        return {
-          ...acc,
-          [next.id]: getFulfillableQuantity(next)
-        };
-      }, {})
-      : {}
+          return {
+            ...acc,
+            [next.id]: getFulfillableQuantity(next),
+          };
+        }, {})
+      : {},
   );
   const [noNotis, setNoNotis] = useState(false);
   const [errors, setErrors] = useState({});
   const [locationSelectValue, setLocationSelectValue] = useState<{
-    value?: string
-    label?: string
+    value?: string;
+    label?: string;
   }>({});
 
-  const [metadata, setMetadata] = useState<MetadataField[]>([
-    { key: "", value: "" }
-  ]);
+  const [metadata, setMetadata] = useState<MetadataField[]>([{ key: '', value: '' }]);
 
   const { stock_locations, refetch } = useAdminStockLocations(
     {},
     {
-      enabled: isLocationFulfillmentEnabled
-    }
+      enabled: isLocationFulfillmentEnabled,
+    },
   );
 
   React.useEffect(() => {
@@ -89,94 +81,74 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
     if (!stock_locations) {
       return [];
     }
-    return stock_locations.map((sl) => ({
+    return stock_locations.map(sl => ({
       value: sl.id,
-      label: sl.name
+      label: sl.name,
     }));
   }, [stock_locations]);
 
   useEffect(() => {
-    const orderInitialLocation = stock_locations?.find(
-      (location: any) => {
-        return (
-          (orderToFulfill?.shipping_address?.country_code?.toUpperCase() ===
-            "US" &&
-            location.name === "CA") || (location.name ===
-            orderToFulfill?.shipping_address?.country_code?.toUpperCase())
-        );
-      }
-    );
+    const orderInitialLocation = stock_locations?.find((location: any) => {
+      return (
+        (orderToFulfill?.shipping_address?.country_code?.toUpperCase() === 'US' && location.name === 'CA') ||
+        location.name === orderToFulfill?.shipping_address?.country_code?.toUpperCase()
+      );
+    });
     if (orderInitialLocation) {
       setLocationSelectValue({
         label: orderInitialLocation.name,
-        value: orderInitialLocation.id
+        value: orderInitialLocation.id,
       });
     }
   }, [stock_locations]);
 
-  const items =
-    "items" in orderToFulfill
-      ? orderToFulfill.items
-      : orderToFulfill.additional_items;
+  const items = 'items' in orderToFulfill ? orderToFulfill.items : orderToFulfill.additional_items;
+
+  const itemsToDisplay = items.filter(item => {
+    return item.returned_quantity && item.returned_quantity < item.quantity;
+  });
 
   const createOrderFulfillment = useAdminCreateFulfillment(orderId);
   const createSwapFulfillment = useAdminFulfillSwap(orderId);
   const createClaimFulfillment = useAdminFulfillClaim(orderId);
 
   const isSubmitting =
-    createOrderFulfillment.isLoading ||
-    createSwapFulfillment.isLoading ||
-    createClaimFulfillment.isLoading;
+    createOrderFulfillment.isLoading || createSwapFulfillment.isLoading || createClaimFulfillment.isLoading;
 
   const notification = useNotification();
 
   const createFulfillment = () => {
     if (isLocationFulfillmentEnabled && !locationSelectValue.value) {
       notification(
-        t("create-fulfillment-error", "Error"),
-        t(
-          "create-fulfillment-please-select-a-location-to-fulfill-from",
-          "Please select a location to fulfill from"
-        ),
-        "error"
+        t('create-fulfillment-error', 'Error'),
+        t('create-fulfillment-please-select-a-location-to-fulfill-from', 'Please select a location to fulfill from'),
+        'error',
       );
       return;
     }
 
     if (Object.keys(errors).length > 0) {
       notification(
-        t(
-          "create-fulfillment-cant-allow-this-action",
-          "Can't allow this action"
-        ),
-        t(
-          "create-fulfillment-trying-to-fulfill-more-than-in-stock",
-          "Trying to fulfill more than in stock"
-        ),
-        "error"
+        t('create-fulfillment-cant-allow-this-action', "Can't allow this action"),
+        t('create-fulfillment-trying-to-fulfill-more-than-in-stock', 'Trying to fulfill more than in stock'),
+        'error',
       );
       return;
     }
 
-    const [type] = orderToFulfill.id.split("_");
+    const [type] = orderToFulfill.id.split('_');
 
-    type actionType =
-      | typeof createOrderFulfillment
-      | typeof createSwapFulfillment
-      | typeof createClaimFulfillment
+    type actionType = typeof createOrderFulfillment | typeof createSwapFulfillment | typeof createClaimFulfillment;
 
     let action: actionType = createOrderFulfillment;
-    let successText = t(
-      "create-fulfillment-successfully-fulfilled-order",
-      "Successfully fulfilled order"
-    );
+    let successText = t('create-fulfillment-successfully-fulfilled-order', 'Successfully fulfilled order');
     let requestObj;
 
     const preparedMetadata = metadata.reduce((acc, next) => {
       if (next.key) {
         return {
           ...acc,
-          [next.key]: next.value
+          [next.key]: next.value,
         };
       } else {
         return acc;
@@ -184,43 +156,37 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
     }, {});
 
     switch (type) {
-      case "swap":
+      case 'swap':
         action = createSwapFulfillment;
-        successText = t(
-          "create-fulfillment-successfully-fulfilled-swap",
-          "Successfully fulfilled swap"
-        );
+        successText = t('create-fulfillment-successfully-fulfilled-swap', 'Successfully fulfilled swap');
         requestObj = {
           swap_id: orderToFulfill.id,
           metadata: preparedMetadata,
-          no_notification: noNotis
+          no_notification: noNotis,
         } as AdminPostOrdersOrderSwapsSwapFulfillmentsReq;
         break;
 
-      case "claim":
+      case 'claim':
         action = createClaimFulfillment;
-        successText = t(
-          "create-fulfillment-successfully-fulfilled-claim",
-          "Successfully fulfilled claim"
-        );
+        successText = t('create-fulfillment-successfully-fulfilled-claim', 'Successfully fulfilled claim');
         requestObj = {
           claim_id: orderToFulfill.id,
           metadata: preparedMetadata,
-          no_notification: noNotis
+          no_notification: noNotis,
         } as AdminPostOrdersOrderClaimsClaimFulfillmentsReq;
         break;
 
       default:
         requestObj = {
           metadata: preparedMetadata,
-          no_notification: noNotis
+          no_notification: noNotis,
         } as AdminPostOrdersOrderFulfillmentsReq;
 
         requestObj.items = Object.entries(quantities)
           .filter(([, value]) => !!value)
           .map(([key, value]) => ({
             item_id: key,
-            quantity: value
+            quantity: value,
           }));
         break;
     }
@@ -231,20 +197,11 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
 
     action.mutate(requestObj, {
       onSuccess: () => {
-        notification(
-          t("create-fulfillment-success", "Success"),
-          successText,
-          "success"
-        );
+        notification(t('create-fulfillment-success', 'Success'), successText, 'success');
         handleCancel();
         onComplete && onComplete();
       },
-      onError: (err) =>
-        notification(
-          t("create-fulfillment-error", "Error"),
-          getErrorMessage(err),
-          "error"
-        )
+      onError: err => notification(t('create-fulfillment-error', 'Error'), getErrorMessage(err), 'error'),
     });
   };
 
@@ -252,22 +209,12 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
     <FocusModal>
       <FocusModal.Header>
         <div className="medium:w-8/12 flex w-full justify-between px-8">
-          <Button
-            size="small"
-            variant="ghost"
-            type="button"
-            onClick={handleCancel}
-          >
+          <Button size="small" variant="ghost" type="button" onClick={handleCancel}>
             <CrossIcon size={20} />
           </Button>
           <div className="gap-x-small flex">
-            <Button
-              size="small"
-              variant="secondary"
-              type="button"
-              onClick={handleCancel}
-            >
-              {t("create-fulfillment-cancel", "Cancel")}
+            <Button size="small" variant="secondary" type="button" onClick={handleCancel}>
+              {t('create-fulfillment-cancel', 'Cancel')}
             </Button>
             <Button
               size="small"
@@ -275,11 +222,9 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
               type="submit"
               loading={isSubmitting}
               onClick={createFulfillment}
-              disabled={
-                !Object.values(quantities).some((quantity) => quantity > 0)
-              }
+              disabled={!Object.values(quantities).some(quantity => quantity > 0)}
             >
-              {t("create-fulfillment-create-fulfillment", "Create fulfillment")}
+              {t('create-fulfillment-create-fulfillment', 'Create fulfillment')}
             </Button>
           </div>
         </div>
@@ -287,22 +232,17 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
       <FocusModal.Main className="medium:w-6/12">
         <div className="pt-16">
           <h1 className="inter-xlarge-semibold">
-            {t(
-              "create-fulfillment-create-fulfillment-title",
-              "Create Fulfillment"
-            )}
+            {t('create-fulfillment-create-fulfillment-title', 'Create Fulfillment')}
           </h1>
           <div className="grid-col-1 grid gap-y-8 divide-y [&>*]:pt-8">
             <FeatureToggle featureFlag="inventoryService">
               <div className="grid grid-cols-2">
                 <div>
-                  <h2 className="inter-base-semibold">
-                    {t("create-fulfillment-locations", "Locations")}
-                  </h2>
+                  <h2 className="inter-base-semibold">{t('create-fulfillment-locations', 'Locations')}</h2>
                   <span className="text-grey-50">
                     {t(
-                      "create-fulfillment-choose-where-you-wish-to-fulfill-from",
-                      "Choose where you wish to fulfill from."
+                      'create-fulfillment-choose-where-you-wish-to-fulfill-from',
+                      'Choose where you wish to fulfill from.',
                     )}
                   </span>
                 </div>
@@ -310,10 +250,10 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
                   isMulti={false}
                   options={locationOptions}
                   value={locationSelectValue}
-                  onChange={(option) => {
+                  onChange={option => {
                     setLocationSelectValue({
                       value: option?.value,
-                      label: option?.label
+                      label: option?.label,
                     });
                   }}
                 />
@@ -321,16 +261,16 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
             </FeatureToggle>
             <div className="flex flex-col">
               <span className="inter-base-semibold ">
-                {t("create-fulfillment-items-to-fulfill", "Items to fulfill")}
+                {t('create-fulfillment-items-to-fulfill', 'Items to fulfill')}
               </span>
               <span className="text-grey-50 mb-6">
                 {t(
-                  "create-fulfillment-select-the-number-of-items-that-you-wish-to-fulfill",
-                  "Select the number of items that you wish to fulfill."
+                  'create-fulfillment-select-the-number-of-items-that-you-wish-to-fulfill',
+                  'Select the number of items that you wish to fulfill.',
                 )}
               </span>
               <CreateFulfillmentItemsTable
-                items={items}
+                items={itemsToDisplay}
                 quantities={quantities}
                 setQuantities={setQuantities}
                 locationId={locationSelectValue.value}
@@ -343,20 +283,14 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
             <div>
               <div className="mb-2xsmall flex items-center justify-between">
                 <h2 className="inter-base-semibold">
-                  {t(
-                    "create-fulfillment-send-notifications",
-                    "Send notifications"
-                  )}
+                  {t('create-fulfillment-send-notifications', 'Send notifications')}
                 </h2>
-                <Switch
-                  checked={!noNotis}
-                  onCheckedChange={(checked) => setNoNotis(!checked)}
-                />
+                <Switch checked={!noNotis} onCheckedChange={checked => setNoNotis(!checked)} />
               </div>
               <p className="inter-base-regular text-grey-50">
                 {t(
-                  "create-fulfillment-when-toggled-notification-emails-will-be-sent",
-                  "When toggled, notification emails will be sent."
+                  'create-fulfillment-when-toggled-notification-emails-will-be-sent',
+                  'When toggled, notification emails will be sent.',
                 )}
               </p>
             </div>

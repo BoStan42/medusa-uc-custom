@@ -1248,6 +1248,8 @@
   "templates-shipped": "Shipped",
   "templates-fulfilled": "Fulfilled",
   "templates-canceled": "Canceled",
+  "templates-returned": "Returned",
+  "templates-partially-canceled": "Partially canceled",
   "templates-partially-fulfilled": "Partially fulfilled",
   "templates-fulfillment-status-requires-action": "Requires Action",
   "templates-awaiting-fulfillment": "Awaiting fulfillment",

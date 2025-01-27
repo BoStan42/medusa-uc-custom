@@ -1,10 +1,11 @@
 {
-  "endOfLine": "auto",
-  "semi": false,
-  "singleQuote": false,
+  "endOfLine": "lf",
+  "semi": true,
+  "singleQuote": true,
   "tabWidth": 2,
-  "trailingComma": "es5",
-  "arrowParens": "always",
+  "trailingComma": "all",
+  "arrowParens": "avoid",
+  "printWidth": 120,
   "overrides": [
     {
       "files": "./packages/admin-ui/**/*.{js,jsx,ts,tsx}",
