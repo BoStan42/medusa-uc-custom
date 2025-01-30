@@ -1,10 +1,8 @@
-import axios from 'axios';
+import { MEDUSA_BACKEND_URL } from '../../../../../constants/medusa-backend-url';
 
 export const sendEmailNotification = async (orderId: string) => {
-  const baseUrl = process.env.BE_URL ?? 'http://localhost:9000';
-
   try {
-    const res = await fetch(`${baseUrl}/admin/reject_refund_request/${orderId}`, {
+    const res = await fetch(`${MEDUSA_BACKEND_URL}/admin/reject_refund_request/${orderId}`, {
       credentials: 'include',
     });
 
