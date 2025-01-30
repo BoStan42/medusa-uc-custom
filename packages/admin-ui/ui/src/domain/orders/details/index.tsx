@@ -1,4 +1,4 @@
-import { Address, ClaimOrder, Fulfillment, LineItem, Swap } from '@medusajs/medusa';
+import { Address, ClaimOrder, Fulfillment, FulfillmentStatus, LineItem, Swap } from '@medusajs/medusa';
 import Medusa from '../../../services/api';
 import {
   useAdminCancelOrder,
@@ -20,7 +20,7 @@ import {
   PaymentStatusComponent,
 } from './templates';
 
-import { capitalize } from 'lodash';
+import { capitalize, update } from 'lodash';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -40,7 +40,7 @@ import DollarSignIcon from '../../../components/fundamentals/icons/dollar-sign-i
 import MailIcon from '../../../components/fundamentals/icons/mail-icon';
 import RefreshIcon from '../../../components/fundamentals/icons/refresh-icon';
 import TruckIcon from '../../../components/fundamentals/icons/truck-icon';
-import { ActionType } from '../../../components/molecules/actionables';
+import Actionables, { ActionType } from '../../../components/molecules/actionables';
 import JSONView from '../../../components/molecules/json-view';
 import BodyCard from '../../../components/organisms/body-card';
 import RawJSON from '../../../components/organisms/raw-json';
@@ -69,6 +69,8 @@ import DownloadIcon from '../../../components/fundamentals/icons/download-icon';
 import openUrlNewWindow from '../../../utils/open-link-new-window';
 import { useAccess } from '../../../providers/access-provider';
 import StatusDot from '../../../components/fundamentals/status-indicator';
+import useChangeFulfillmentStatus from './hooks/useChangeFulfillmentStatus';
+import { FulfilmentStatuses } from '../../../types/utils';
 
 type OrderDetailFulfillment = {
   title: string;
@@ -132,6 +134,7 @@ const OrderDetails = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const [userTaxId, setUserTaxId] = useState<string | null>(null);
+  const { changeFulfillmentStatus } = useChangeFulfillmentStatus(id!);
 
   const dialog = useImperativeDialog();
 
@@ -150,7 +153,7 @@ const OrderDetails = () => {
   const [showRefund, setShowRefund] = useState(false);
   const [fullfilmentToShip, setFullfilmentToShip] = useState(null);
 
-  const { order, isLoading } = useAdminOrder(id!);
+  const { order, isLoading, refetch } = useAdminOrder(id!);
 
   const capturePayment = useAdminCapturePayment(id!);
   const cancelOrder = useAdminCancelOrder(id!);
@@ -211,6 +214,66 @@ const OrderDetails = () => {
   useHotkeys('command+i', handleCopy);
 
   const { getWidgets } = useWidgets();
+
+  const fulfilmentStatusActionables: ActionType[] = [
+    {
+      label: 'Fulfilled',
+      icon: <StatusDot variant="warning" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.FULFILLED),
+    },
+    {
+      label: 'Not Fulfilled',
+      icon: <StatusDot variant="danger" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.NOT_FULFILLED),
+    },
+    {
+      label: 'Partially fulfilled',
+      icon: <StatusDot variant="warning" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.PARTIALLY_FULFILLED),
+    },
+    {
+      label: 'Shipped',
+      icon: <StatusDot variant="success" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.SHIPPED),
+    },
+    {
+      label: 'Partially Shipped',
+      icon: <StatusDot variant="warning" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.PARTIALLY_SHIPPED),
+    },
+    {
+      label: 'Partially returned',
+      icon: <StatusDot variant="warning" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.PARTIALLY_RETURNED),
+    },
+    {
+      label: 'Returned',
+      icon: <StatusDot variant="danger" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.RETURNED),
+    },
+    {
+      label: 'Canceled',
+      icon: <StatusDot variant="danger" />,
+      variant: 'normal',
+      onClick: () => handleChangeFulfillmentStatus(FulfilmentStatuses.CANCELED),
+    },
+  ];
+
+  const handleChangeFulfillmentStatus = async (status: FulfilmentStatuses) => {
+    try {
+      await changeFulfillmentStatus(status);
+      await refetch();
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   const handleDeleteOrder = async () => {
     const shouldDelete = await dialog({
@@ -498,18 +561,34 @@ const OrderDetails = () => {
                   className={'h-auto min-h-0 w-full'}
                   title={t('details-fulfillment', 'Fulfillment')}
                   status={<FulfillmentStatusComponent status={order.fulfillment_status} />}
+                  forceDropdown={true}
                   customActionable={
                     order.status !== 'canceled' && (
-                      <Button
-                        variant="secondary"
-                        size="small"
-                        disabled={order.payment_status === 'refunded' || !anyItemsToFulfil}
-                        onClick={() => setShowFulfillment(true)}
-                      >
-                        {t('details-create-fulfillment', 'Create Fulfillment')}
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          disabled={order.payment_status === 'refunded' || !anyItemsToFulfil}
+                          onClick={() => setShowFulfillment(true)}
+                        >
+                          {t('details-create-fulfillment', 'Create Fulfillment')}
+                        </Button>
+                        <Actionables actions={fulfilmentStatusActionables} />
+                      </div>
                     )
                   }
+                  // actionables={[
+                  //   {
+                  //     label: t('details-create-fulfillment', 'Create Fulfillment'),
+                  //     variant: 'normal',
+                  //     onClick: () => <></>,
+                  //   },
+                  //   {
+                  //     label: t('details-change-fulfillment-status', 'Change Status'),
+                  //     variant: 'normal',
+                  //     onClick: () => setShowFulfillmentStatusChange(true),
+                  //   },
+                  // ]}
                 >
                   <div className="mt-6">
                     {order.shipping_methods.map(method => (
