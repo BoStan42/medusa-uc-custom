@@ -27,8 +27,6 @@ import useOrdersExpandParam from '../utils/use-admin-expand-paramter';
 import { useAdminStockLocations } from 'medusa-react';
 import Select from '../../../../components/molecules/select/next-select/select';
 import Spinner from '../../../../components/atoms/spinner';
-import axios from 'axios';
-import { sendEmailNotification } from './utils/sendEmailNotification';
 
 type Props = {
   order: Order;
@@ -53,7 +51,6 @@ export const ReceiveReturnMenu = ({ order, returnRequest, onClose }: Props) => {
     expand: orderRelations,
   });
 
-  // debugger;
   const form = useForm<ReceiveReturnFormType>({
     defaultValues: getDefaultReceiveReturnValues(order, returnRequest),
     reValidateMode: 'onBlur',
