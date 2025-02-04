@@ -17,6 +17,14 @@ const usFirst = (str: string) => {
   return str ? (str.charAt(0)?.toUpperCase() ?? '') + (str.slice(1) ?? '') : str;
 };
 
+const getLink = (value: string) => {
+  if (value.startsWith('https://') || value.startsWith('http://')) {
+    return value;
+  } else {
+    return `https://${value}`;
+  }
+};
+
 const getCustomerFields = (customer: Customer | undefined) => {
   let fields = [] as CustomerFieldsType[];
 
@@ -58,7 +66,7 @@ const getCustomerFields = (customer: Customer | undefined) => {
           case 'website':
             name = 'Website';
             value = (
-              <a href={`https://${String(value)}`} className="text-blue-60" target="_blank" rel="nofollow">
+              <a href={getLink(String(value))} className="text-blue-60" target="_blank" rel="nofollow">
                 {String(value)}
               </a>
             );
