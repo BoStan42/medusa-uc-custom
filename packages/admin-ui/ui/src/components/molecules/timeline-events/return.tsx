@@ -14,7 +14,7 @@ import { ActionType } from '../actionables';
 import EventActionables from './event-actionables';
 import EventContainer from './event-container';
 import EventItemContainer from './event-item-container';
-import { sendEmailNotification } from '../../../domain/orders/details/receive-return/utils/sendEmailNotification';
+import { useSendEmailNotification } from '../../../domain/orders/details/receive-return/hooks/useSendEmailNotification';
 
 type ReturnRequestedProps = {
   event: ReturnEvent;
@@ -24,6 +24,7 @@ type ReturnRequestedProps = {
 const Return: React.FC<ReturnRequestedProps> = ({ event, refetch }) => {
   const [showCancel, setShowCancel] = useState(false);
   const cancelReturn = useAdminCancelReturn(event.id);
+  const { sendEmailNotification } = useSendEmailNotification();
 
   const { state: showReceiveReturnMenu, close: closeReceiveReturnMenu, open: openReceiveReturnMenu } = useToggleState();
 
