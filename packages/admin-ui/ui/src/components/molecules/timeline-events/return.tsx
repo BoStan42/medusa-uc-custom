@@ -19,12 +19,13 @@ import { useSendEmailNotification } from '../../../domain/orders/details/receive
 type ReturnRequestedProps = {
   event: ReturnEvent;
   refetch: () => void;
+  refetchOrder: () => void;
 };
 
-const Return: React.FC<ReturnRequestedProps> = ({ event, refetch }) => {
+const Return: React.FC<ReturnRequestedProps> = ({ event, refetch, refetchOrder }) => {
   const [showCancel, setShowCancel] = useState(false);
   const cancelReturn = useAdminCancelReturn(event.id);
-  const { sendEmailNotification } = useSendEmailNotification();
+  const { sendRejectRefundRequestEmail } = useSendEmailNotification();
 
   const { state: showReceiveReturnMenu, close: closeReceiveReturnMenu, open: openReceiveReturnMenu } = useToggleState();
 
@@ -32,7 +33,7 @@ const Return: React.FC<ReturnRequestedProps> = ({ event, refetch }) => {
     cancelReturn.mutate(undefined, {
       onSuccess: () => {
         console.log('event', event);
-        sendEmailNotification(event.order.id);
+        sendRejectRefundRequestEmail(event.order.id);
         refetch();
       },
     });
@@ -58,7 +59,12 @@ const Return: React.FC<ReturnRequestedProps> = ({ event, refetch }) => {
         />
       )}
       {showReceiveReturnMenu && (
-        <ReceiveReturnMenu onClose={closeReceiveReturnMenu} order={event.order} returnRequest={event.raw} />
+        <ReceiveReturnMenu
+          onClose={closeReceiveReturnMenu}
+          order={event.order}
+          returnRequest={event.raw}
+          refetchOrder={refetchOrder}
+        />
       )}
     </>
   );

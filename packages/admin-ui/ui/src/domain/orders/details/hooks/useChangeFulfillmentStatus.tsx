@@ -10,7 +10,7 @@ const useChangeFulfillmentStatus = (orderId: string) => {
 
   const changeFulfillmentStatus = async (status: string) => {
     try {
-      const res = await client.admin.custom.post(`admin/change-fulfillment-status/${orderId}`, {
+      const res = await client.admin.custom.post(`/admin/change-fulfillment-status/${orderId}`, {
         fulfillment_status: status,
       });
 

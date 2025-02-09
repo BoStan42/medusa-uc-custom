@@ -126,8 +126,6 @@ const getDefaultShippingValues = (): Subset<ShippingFormType> => {
 };
 
 const getReturnableItemsValues = (order: Order) => {
-  console.log('order', order);
-
   const returnItems: ItemsToReturnFormType = {
     items: [],
   };

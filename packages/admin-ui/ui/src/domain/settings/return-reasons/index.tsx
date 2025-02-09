@@ -1,48 +1,48 @@
-import { useAdminReturnReasons } from "medusa-react"
-import { useState } from "react"
-import { useTranslation } from "react-i18next"
-import BackButton from "../../../components/atoms/back-button"
-import Spinner from "../../../components/atoms/spinner"
-import PlusIcon from "../../../components/fundamentals/icons/plus-icon"
-import BodyCard from "../../../components/organisms/body-card"
-import RadioGroup from "../../../components/organisms/radio-group"
-import TwoSplitPane from "../../../components/templates/two-split-pane"
-import useModal from "../../../hooks/use-toggle-state"
-import CreateReturnReasonModal from "./create-reason-modal"
-import ReturnReasonDetail from "./detail"
+import { useAdminReturnReasons } from 'medusa-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import BackButton from '../../../components/atoms/back-button';
+import Spinner from '../../../components/atoms/spinner';
+import PlusIcon from '../../../components/fundamentals/icons/plus-icon';
+import BodyCard from '../../../components/organisms/body-card';
+import RadioGroup from '../../../components/organisms/radio-group';
+import TwoSplitPane from '../../../components/templates/two-split-pane';
+import useModal from '../../../hooks/use-toggle-state';
+import CreateReturnReasonModal from './create-reason-modal';
+import ReturnReasonDetail from './detail';
 
 const ReturnReasons = () => {
-  const { state: isOpen, open, close } = useModal()
-  const [selectedReason, setSelectedReason] = useState<any>(null)
-  const { t } = useTranslation()
+  const { state: isOpen, open, close } = useModal();
+  const [selectedReason, setSelectedReason] = useState<any>(null);
+  const { t } = useTranslation();
   const { isLoading, return_reasons } = useAdminReturnReasons({
-    onSuccess: (data) => {
+    onSuccess: data => {
       // sorting is done in place
-      sortByCreatedAt(data.return_reasons)
+      sortByCreatedAt(data.return_reasons);
 
-      const newReturnReasons = data.return_reasons
+      const newReturnReasons = data.return_reasons;
       // if this is the first time we fetch this list
       // or if this is a refetch after a deletion
       // then set the first element as the selected reason
       if (!selectedReason || isADeletion(return_reasons, newReturnReasons)) {
-        setSelectedReason(newReturnReasons[0])
+        setSelectedReason(newReturnReasons[0]);
       }
     },
-  })
+  });
 
   return (
     <div>
       <BackButton
-        path="/a/settings"
-        label={t("return-reasons-back-to-settings", "Back to settings")}
+        // path="/a/settings"
+        label={t('return-reasons-back-to-settings', 'Back to settings')}
         className="mb-xsmall"
       />
       <TwoSplitPane>
         <BodyCard
-          title={t("return-reasons-return-reasons", "Return Reasons")}
+          title={t('return-reasons-return-reasons', 'Return Reasons')}
           actionables={[
             {
-              label: t("return-reasons-add-reason-label", "Add reason"),
+              label: t('return-reasons-add-reason-label', 'Add reason'),
               icon: (
                 <span className="text-grey-90">
                   <PlusIcon size={20} />
@@ -51,10 +51,7 @@ const ReturnReasons = () => {
               onClick: open,
             },
           ]}
-          subtitle={t(
-            "return-reasons-manage-reasons-for-returned-items",
-            "Manage reasons for returned items"
-          )}
+          subtitle={t('return-reasons-manage-reasons-for-returned-items', 'Manage reasons for returned items')}
         >
           <div className="mt-large">
             {isLoading ? (
@@ -63,12 +60,10 @@ const ReturnReasons = () => {
               </div>
             ) : (
               <RadioGroup.Root
-                onValueChange={(value) =>
-                  setSelectedReason(findReasonByValue(return_reasons, value))
-                }
+                onValueChange={value => setSelectedReason(findReasonByValue(return_reasons, value))}
                 value={selectedReason?.value}
               >
-                {return_reasons?.map((reason) => (
+                {return_reasons?.map(reason => (
                   <RadioGroup.Item
                     key={reason.id}
                     label={reason.label}
@@ -85,17 +80,17 @@ const ReturnReasons = () => {
       </TwoSplitPane>
       {isOpen && <CreateReturnReasonModal handleClose={close} />}
     </div>
-  )
-}
+  );
+};
 
 const isADeletion = (returnReasons, newReturnReasons) =>
-  returnReasons && returnReasons?.length > newReturnReasons?.length
+  returnReasons && returnReasons?.length > newReturnReasons?.length;
 
 const sortByCreatedAt = <T extends Record<string, any>>(returnReasons: T[]) =>
-  returnReasons?.sort((a, b) => (a.created_at < b.created_at ? -1 : 1))
+  returnReasons?.sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
 
 const findReasonByValue = (reasons, value) => {
-  return reasons.find((reason) => reason.value === value)
-}
+  return reasons.find(reason => reason.value === value);
+};
 
-export default ReturnReasons
+export default ReturnReasons;
