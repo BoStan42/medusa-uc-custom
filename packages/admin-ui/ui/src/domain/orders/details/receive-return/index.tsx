@@ -27,11 +27,14 @@ import useOrdersExpandParam from '../utils/use-admin-expand-paramter';
 import { useAdminStockLocations } from 'medusa-react';
 import Select from '../../../../components/molecules/select/next-select/select';
 import Spinner from '../../../../components/atoms/spinner';
+import { useSendEmailNotification } from './hooks/useSendEmailNotification';
+import { useChangePaymentStatus } from './hooks/useChangePaymentStatus';
 
 type Props = {
   order: Order;
   returnRequest: Return;
   onClose: () => void;
+  refetchOrder: () => void;
 };
 
 export type ReceiveReturnFormType = {
@@ -39,17 +42,19 @@ export type ReceiveReturnFormType = {
   refund_amount: RefundAmountFormType;
 };
 
-export const ReceiveReturnMenu = ({ order, returnRequest, onClose }: Props) => {
+export const ReceiveReturnMenu = ({ order, returnRequest, onClose, refetchOrder }: Props) => {
   const { client } = useMedusa();
   const { t } = useTranslation();
   const { isFeatureEnabled } = useFeatureFlag();
   const isLocationFulfillmentEnabled = isFeatureEnabled('inventoryService') && isFeatureEnabled('stockLocationService');
+  const { sendApproveRefundRequestEmail } = useSendEmailNotification();
 
   const { mutate, isLoading } = useAdminReceiveReturn(returnRequest.id);
   const { orderRelations } = useOrdersExpandParam();
   const { refetch } = useAdminOrder(order.id, {
     expand: orderRelations,
   });
+  const { changePaymentStatus } = useChangePaymentStatus();
 
   const form = useForm<ReceiveReturnFormType>({
     defaultValues: getDefaultReceiveReturnValues(order, returnRequest),
@@ -238,7 +243,7 @@ export const ReceiveReturnMenu = ({ order, returnRequest, onClose }: Props) => {
     }
 
     mutate(toCreate, {
-      onSuccess: () => {
+      onSuccess: res => {
         notification(
           t('receive-return-successfully-received-return', 'Successfully received return'),
           t('receive-return-received-return-for-order', 'Received return for order #{{display_id}}', {
@@ -246,10 +251,16 @@ export const ReceiveReturnMenu = ({ order, returnRequest, onClose }: Props) => {
           }),
           'success',
         );
-        // We need to refetch the order to get the updated state
+
         refetch();
 
-        onClose();
+        sendApproveRefundRequestEmail(order.id);
+
+        if (res.return.order_id) {
+          const refundable = order.refundable_amount - res.return.refund_amount;
+          const paymentStatus = refundable === 0 ? 'refunded' : 'partially_refunded';
+          changePaymentStatus(res.return.order_id, paymentStatus, [refetchOrder, onClose]);
+        }
       },
       onError: error => {
         notification(

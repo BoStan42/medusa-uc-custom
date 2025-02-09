@@ -195,6 +195,10 @@ const OrderDetails = () => {
     }
   }, [order?.cart_id]);
 
+  useEffect(() => {
+    refetch();
+  }, [order]);
+
   const navigate = useNavigate();
   const notification = useNotification();
 
@@ -388,7 +392,7 @@ const OrderDetails = () => {
       <OrderEditProvider orderId={id!}>
         <div className="items-top flex flex-row justify-between">
           <div>
-            <BackButton path="/a/orders" label={t('details-back-to-orders', 'Back to Orders')} className="mb-xsmall" />
+            <BackButton label={t('details-back-to-orders', 'Back to Orders')} className="mb-xsmall" />
           </div>
           <div className="inline-flex flex-row gap-4">
             {!!invoiceUrl && (
@@ -577,18 +581,6 @@ const OrderDetails = () => {
                       </div>
                     )
                   }
-                  // actionables={[
-                  //   {
-                  //     label: t('details-create-fulfillment', 'Create Fulfillment'),
-                  //     variant: 'normal',
-                  //     onClick: () => <></>,
-                  //   },
-                  //   {
-                  //     label: t('details-change-fulfillment-status', 'Change Status'),
-                  //     variant: 'normal',
-                  //     onClick: () => setShowFulfillmentStatusChange(true),
-                  //   },
-                  // ]}
                 >
                   <div className="mt-6">
                     {order.shipping_methods.map(method => (
@@ -740,7 +732,7 @@ const OrderDetails = () => {
                 <RawJSON data={order} title={t('details-raw-order', 'Raw order')} />
                 <Spacer />
               </div>
-              <Timeline orderId={order.id} />
+              <Timeline orderId={order.id} refetchOrder={refetch} />
             </div>
 
             <AddressModal

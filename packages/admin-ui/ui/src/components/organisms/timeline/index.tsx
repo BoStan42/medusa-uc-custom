@@ -53,9 +53,10 @@ import Return from '../../molecules/timeline-events/return';
 
 type TimelineProps = {
   orderId: string;
+  refetchOrder: () => void;
 };
 
-const Timeline: React.FC<TimelineProps> = ({ orderId }) => {
+const Timeline: React.FC<TimelineProps> = ({ orderId, refetchOrder }) => {
   const { t } = useTranslation();
   const { orderRelations } = useOrdersExpandParam();
 
@@ -137,7 +138,7 @@ const Timeline: React.FC<TimelineProps> = ({ orderId }) => {
           ) : (
             <div className="flex flex-col">
               {events.map((event, i) => {
-                return <div key={i}>{switchOnType(event, refetch)}</div>;
+                return <div key={i}>{switchOnType(event, refetch, refetchOrder)}</div>;
               })}
             </div>
           )}
@@ -161,7 +162,7 @@ const Timeline: React.FC<TimelineProps> = ({ orderId }) => {
   );
 };
 
-function switchOnType(event: TimelineEvent, refetch: () => void) {
+function switchOnType(event: TimelineEvent, refetch: () => void, refetchOrder: () => void) {
   switch (event.type) {
     case 'placed':
       return <OrderPlaced event={event as OrderPlacedEvent} />;
@@ -174,7 +175,7 @@ function switchOnType(event: TimelineEvent, refetch: () => void) {
     case 'canceled':
       return <OrderCanceled event={event as TimelineEvent} />;
     case 'return':
-      return <Return event={event as ReturnEvent} refetch={refetch} />;
+      return <Return event={event as ReturnEvent} refetch={refetch} refetchOrder={refetchOrder} />;
     case 'exchange':
       return <Exchange key={event.id} event={event as ExchangeEvent} refetch={refetch} />;
     case 'claim':
