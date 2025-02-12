@@ -102,7 +102,10 @@ const CreateFulfillmentModal: React.FC<CreateFulfillmentModalProps> = ({
     }
   }, [stock_locations]);
 
-  const items = 'items' in orderToFulfill ? orderToFulfill.items : orderToFulfill.additional_items;
+  const refundableItems =
+    'items' in orderToFulfill && orderToFulfill.items.filter(item => (item.refundable as number) > 0);
+  const items = 'items' in orderToFulfill ? refundableItems : orderToFulfill.additional_items;
+  // const items = 'items' in orderToFulfill ? orderToFulfill.items : orderToFulfill.additional_items;
 
   const createOrderFulfillment = useAdminCreateFulfillment(orderId);
   const createSwapFulfillment = useAdminFulfillSwap(orderId);
