@@ -1,23 +1,23 @@
-import { isEmpty } from "lodash"
-import { useAdminDiscounts } from "medusa-react"
-import qs from "qs"
-import React, { useEffect, useState } from "react"
-import { usePagination, useTable } from "react-table"
-import { useTranslation } from "react-i18next"
-import { useAnalytics } from "../../../providers/analytics-provider"
-import Table from "../../molecules/table"
-import TableContainer from "../../organisms/table-container"
-import DiscountFilters from "../discount-filter-dropdown"
-import { usePromotionTableColumns } from "./use-promotion-columns"
-import { usePromotionFilters } from "./use-promotion-filters"
-import usePromotionActions from "./use-promotion-row-actions"
+import { isEmpty } from 'lodash';
+import { useAdminDiscounts } from 'medusa-react';
+import qs from 'qs';
+import React, { useEffect, useState } from 'react';
+import { usePagination, useTable } from 'react-table';
+import { useTranslation } from 'react-i18next';
+import { useAnalytics } from '../../../providers/analytics-provider';
+import Table from '../../molecules/table';
+import TableContainer from '../../organisms/table-container';
+import DiscountFilters from '../discount-filter-dropdown';
+import { usePromotionTableColumns } from './use-promotion-columns';
+import { usePromotionFilters } from './use-promotion-filters';
+import usePromotionActions from './use-promotion-row-actions';
 
-const DEFAULT_PAGE_SIZE = 15
+const DEFAULT_PAGE_SIZE = 15;
 
-const defaultQueryProps = {}
+const defaultQueryProps = {};
 
 const DiscountTable: React.FC = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const {
     removeTab,
     setTab,
@@ -31,17 +31,17 @@ const DiscountTable: React.FC = () => {
     setQuery: setFreeText,
     queryObject,
     representationObject,
-  } = usePromotionFilters(location.search, defaultQueryProps)
+  } = usePromotionFilters(location.search, defaultQueryProps);
 
-  const { trackNumberOfDiscounts } = useAnalytics()
+  const { trackNumberOfDiscounts } = useAnalytics();
 
-  const offs = parseInt(queryObject?.offset) || 0
-  const lim = parseInt(queryObject.limit) || DEFAULT_PAGE_SIZE
+  const offs = parseInt(queryObject?.offset) || 0;
+  const lim = parseInt(queryObject.limit) || DEFAULT_PAGE_SIZE;
 
   const { discounts, isLoading, count } = useAdminDiscounts(
     {
       is_dynamic: false,
-      expand: "rule,rule.conditions,rule.conditions.products,regions",
+      expand: 'rule,rule.conditions,rule.conditions.products,regions',
       ...queryObject,
     },
     {
@@ -49,24 +49,24 @@ const DiscountTable: React.FC = () => {
       onSuccess: ({ count }) => {
         trackNumberOfDiscounts({
           count,
-        })
+        });
       },
-    }
-  )
+    },
+  );
 
-  const [query, setQuery] = useState("")
-  const [numPages, setNumPages] = useState(0)
+  const [query, setQuery] = useState('');
+  const [numPages, setNumPages] = useState(0);
 
   useEffect(() => {
     if (count && queryObject.limit) {
-      const controlledPageCount = Math.ceil(count! / queryObject.limit)
+      const controlledPageCount = Math.ceil(count! / queryObject.limit);
       if (controlledPageCount !== numPages) {
-        setNumPages(controlledPageCount)
+        setNumPages(controlledPageCount);
       }
     }
-  }, [count, queryObject.limit])
+  }, [count, queryObject.limit]);
 
-  const [columns] = usePromotionTableColumns()
+  const [columns] = usePromotionTableColumns();
 
   const {
     getTableProps,
@@ -94,61 +94,68 @@ const DiscountTable: React.FC = () => {
       pageCount: numPages,
       autoResetPage: false,
     },
-    usePagination
-  )
+    usePagination,
+  );
 
   // Debounced search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (query) {
-        setFreeText(query)
-        gotoPage(0)
+        setFreeText(query);
+        gotoPage(0);
       } else {
         // if we delete query string, we reset the table view
-        reset()
+        reset();
       }
-    }, 400)
+    }, 400);
 
-    return () => clearTimeout(delayDebounceFn)
-  }, [query])
+    return () => clearTimeout(delayDebounceFn);
+  }, [query]);
 
   const handleNext = () => {
     if (canNextPage) {
-      paginate(1)
-      nextPage()
+      paginate(1);
+      nextPage();
     }
-  }
+  };
 
   const handlePrev = () => {
     if (canPreviousPage) {
-      paginate(-1)
-      previousPage()
+      paginate(-1);
+      previousPage();
     }
-  }
+  };
+
+  const handlePageInput = (page: number) => {
+    if (page >= 1 && page <= numPages) {
+      gotoPage(page - 1);
+      paginate(page, 'goToPage');
+    }
+  };
 
   const updateUrlFromFilter = (obj = {}) => {
-    const stringified = qs.stringify(obj)
-    window.history.replaceState(`/a/discounts`, "", `${`?${stringified}`}`)
-  }
+    const stringified = qs.stringify(obj);
+    window.history.replaceState(`/a/discounts`, '', `${`?${stringified}`}`);
+  };
 
   const refreshWithFilters = () => {
-    const filterObj = representationObject
+    const filterObj = representationObject;
 
     if (isEmpty(filterObj)) {
-      updateUrlFromFilter({ offset: 0, limit: DEFAULT_PAGE_SIZE })
+      updateUrlFromFilter({ offset: 0, limit: DEFAULT_PAGE_SIZE });
     } else {
-      updateUrlFromFilter(filterObj)
+      updateUrlFromFilter(filterObj);
     }
-  }
+  };
 
   const clearFilters = () => {
-    reset()
-    setQuery("")
-  }
+    reset();
+    setQuery('');
+  };
 
   useEffect(() => {
-    refreshWithFilters()
-  }, [representationObject])
+    refreshWithFilters();
+  }, [representationObject]);
 
   return (
     <TableContainer
@@ -159,13 +166,14 @@ const DiscountTable: React.FC = () => {
         count: count!,
         offset: queryObject.offset,
         pageSize: queryObject.offset + rows.length,
-        title: t("discount-table-discounts", "Discounts"),
+        title: t('discount-table-discounts', 'Discounts'),
         currentPage: pageIndex + 1,
         pageCount: pageCount,
         nextPage: handleNext,
         prevPage: handlePrev,
         hasNext: canNextPage,
         hasPrev: canPreviousPage,
+        gotoPage: handlePageInput,
       }}
     >
       <Table
@@ -183,57 +191,48 @@ const DiscountTable: React.FC = () => {
         }
         enableSearch
         handleSearch={setQuery}
-        searchPlaceholder={t(
-          "discount-table-search-by-code-or-description",
-          "Search by code or description..."
-        )}
+        searchPlaceholder={t('discount-table-search-by-code-or-description', 'Search by code or description...')}
         searchValue={query}
         {...getTableProps()}
       >
         <Table.Head>
-          {headerGroups?.map((headerGroup) => (
+          {headerGroups?.map(headerGroup => (
             <Table.HeadRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((col) => (
-                <Table.HeadCell {...col.getHeaderProps()}>
-                  {col.render("Header")}
-                </Table.HeadCell>
+              {headerGroup.headers.map(col => (
+                <Table.HeadCell {...col.getHeaderProps()}>{col.render('Header')}</Table.HeadCell>
               ))}
             </Table.HeadRow>
           ))}
         </Table.Head>
         <Table.Body {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row)
-            return <PromotionRow row={row} key={row.original.id} />
+          {rows.map(row => {
+            prepareRow(row);
+            return <PromotionRow row={row} key={row.original.id} />;
           })}
         </Table.Body>
       </Table>
     </TableContainer>
-  )
-}
+  );
+};
 
 const PromotionRow = ({ row }) => {
-  const promotion = row.original
+  const promotion = row.original;
 
-  const { getRowActions } = usePromotionActions(promotion)
+  const { getRowActions } = usePromotionActions(promotion);
 
   return (
     <Table.Row
-      color={"inherit"}
+      color={'inherit'}
       linkTo={`/a/discounts/${row.original.id}`}
       {...row.getRowProps()}
       actions={getRowActions()}
       className="group"
     >
-      {row.cells.map((cell) => {
-        return (
-          <Table.Cell {...cell.getCellProps()}>
-            {cell.render("Cell")}
-          </Table.Cell>
-        )
+      {row.cells.map(cell => {
+        return <Table.Cell {...cell.getCellProps()}>{cell.render('Cell')}</Table.Cell>;
       })}
     </Table.Row>
-  )
-}
+  );
+};
 
-export default DiscountTable
+export default DiscountTable;

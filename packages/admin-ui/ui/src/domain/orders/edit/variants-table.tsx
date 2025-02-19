@@ -1,41 +1,40 @@
-import { useAdminVariants, useAdminVariantsInventory } from "medusa-react"
-import React, { useEffect, useMemo, useState } from "react"
-import { usePagination, useRowSelect, useTable } from "react-table"
-import { InventoryLevelDTO, ProductVariant } from "@medusajs/medusa"
-import clsx from "clsx"
-import pluralize from "pluralize"
-import { useTranslation } from "react-i18next"
-import { useDebounce } from "../../../hooks/use-debounce"
-import ImagePlaceholder from "../../../components/fundamentals/image-placeholder"
-import Table from "../../../components/molecules/table"
-import IndeterminateCheckbox from "../../../components/molecules/indeterminate-checkbox"
-import { formatAmountWithSymbol } from "../../../utils/prices"
-import TableContainer from "../../../components/organisms/table-container"
-import Tooltip from "../../../components/atoms/tooltip"
-import useStockLocations from "../../../hooks/use-stock-locations"
-import Skeleton from "../../../components/atoms/skeleton"
+import { useAdminVariants, useAdminVariantsInventory } from 'medusa-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { usePagination, useRowSelect, useTable } from 'react-table';
+import { InventoryLevelDTO, ProductVariant } from '@medusajs/medusa';
+import clsx from 'clsx';
+import pluralize from 'pluralize';
+import { useTranslation } from 'react-i18next';
+import { useDebounce } from '../../../hooks/use-debounce';
+import ImagePlaceholder from '../../../components/fundamentals/image-placeholder';
+import Table from '../../../components/molecules/table';
+import IndeterminateCheckbox from '../../../components/molecules/indeterminate-checkbox';
+import { formatAmountWithSymbol } from '../../../utils/prices';
+import TableContainer from '../../../components/organisms/table-container';
+import Tooltip from '../../../components/atoms/tooltip';
+import useStockLocations from '../../../hooks/use-stock-locations';
+import Skeleton from '../../../components/atoms/skeleton';
 
-const PAGE_SIZE = 12
+const PAGE_SIZE = 12;
 
 type Props = {
-  isReplace?: boolean
-  regionId: string
-  customerId: string
-  currencyCode: string
-  setSelectedVariants: (selectedIds: ProductVariant[]) => void
-}
+  isReplace?: boolean;
+  regionId: string;
+  customerId: string;
+  currencyCode: string;
+  setSelectedVariants: (selectedIds: ProductVariant[]) => void;
+};
 
-const VariantsTable: React.FC<Props> = (props) => {
-  const { t } = useTranslation()
-  const { isReplace, regionId, currencyCode, customerId, setSelectedVariants } =
-    props
+const VariantsTable: React.FC<Props> = props => {
+  const { t } = useTranslation();
+  const { isReplace, regionId, currencyCode, customerId, setSelectedVariants } = props;
 
-  const [query, setQuery] = useState("")
-  const [offset, setOffset] = useState(0)
-  const [numPages, setNumPages] = useState(0)
-  const [currentPage, setCurrentPage] = useState(0)
+  const [query, setQuery] = useState('');
+  const [offset, setOffset] = useState(0);
+  const [numPages, setNumPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const debouncedSearchTerm = useDebounce(query, 500)
+  const debouncedSearchTerm = useDebounce(query, 500);
 
   const { isLoading, count, variants } = useAdminVariants({
     q: debouncedSearchTerm,
@@ -43,18 +42,18 @@ const VariantsTable: React.FC<Props> = (props) => {
     offset,
     region_id: regionId,
     customer_id: customerId,
-  })
+  });
 
   useEffect(() => {
-    if (typeof count !== "undefined") {
-      setNumPages(Math.ceil(count / PAGE_SIZE))
+    if (typeof count !== 'undefined') {
+      setNumPages(Math.ceil(count / PAGE_SIZE));
     }
-  }, [count])
+  }, [count]);
 
   const VariantInventoryCell = ({ row: { original } }) => {
-    const { getLocationNameById } = useStockLocations()
+    const { getLocationNameById } = useStockLocations();
 
-    const { variant, isLoading } = useAdminVariantsInventory(original.id)
+    const { variant, isLoading } = useAdminVariantsInventory(original.id);
 
     if (isLoading) {
       return (
@@ -63,111 +62,85 @@ const VariantsTable: React.FC<Props> = (props) => {
             <div className="h-[20px] w-[50px]" />
           </Skeleton>
         </div>
-      )
+      );
     }
 
     if (!isLoading && !variant?.inventory?.length) {
-      return <div className="text-right">{original.inventory_quantity}</div>
+      return <div className="text-right">{original.inventory_quantity}</div>;
     }
 
-    const { inventory } = variant
+    const { inventory } = variant;
 
     const total = inventory[0].location_levels.reduce(
-      (sum: number, location_level: InventoryLevelDTO) =>
-        (sum += location_level.stocked_quantity),
-      0
-    )
+      (sum: number, location_level: InventoryLevelDTO) => (sum += location_level.stocked_quantity),
+      0,
+    );
 
     const LocationTooltip = (
       <>
-        {inventory[0].location_levels.map(
-          (location_level: InventoryLevelDTO) => (
-            <div key={location_level.id} className="font-normal">
-              <span className="font-semibold">
-                {location_level.stocked_quantity}
-              </span>
-              {t("variants-table-location", " in {{location}}", {
-                location: getLocationNameById(location_level.location_id),
-              })}
-            </div>
-          )
-        )}
+        {inventory[0].location_levels.map((location_level: InventoryLevelDTO) => (
+          <div key={location_level.id} className="font-normal">
+            <span className="font-semibold">{location_level.stocked_quantity}</span>
+            {t('variants-table-location', ' in {{location}}', {
+              location: getLocationNameById(location_level.location_id),
+            })}
+          </div>
+        ))}
       </>
-    )
+    );
 
     return (
       <Tooltip content={LocationTooltip} side="top" className="translate-x-1/4">
         <div className="text-right">
-          {total} in {inventory[0].location_levels.length}{" "}
-          {pluralize("location", inventory[0].location_levels.length)}
+          {total} in {inventory[0].location_levels.length} {pluralize('location', inventory[0].location_levels.length)}
         </div>
       </Tooltip>
-    )
-  }
+    );
+  };
 
   const ProductCell = ({ row: { original } }) => {
     return (
       <div className="flex items-center">
         <div className="my-1.5 mr-4 flex h-[40px] w-[30px] items-center">
           {original.product.thumbnail ? (
-            <img
-              src={original.product.thumbnail}
-              className="rounded-soft h-full object-cover"
-            />
+            <img src={original.product.thumbnail} className="rounded-soft h-full object-cover" />
           ) : (
             <ImagePlaceholder />
           )}
         </div>
         <div className="flex max-w-[200px] flex-col">
-          <Tooltip
-            content={
-              <span className="font-normal">{original.product.title}</span>
-            }
-            maxWidth={400}
-          >
-            <div className="truncate">
-              {original.sku ?? original.product.title}
-            </div>
+          <Tooltip content={<span className="font-normal">{original.product.title}</span>} maxWidth={400}>
+            <div className="truncate">{original.sku ?? original.product.title}</div>
           </Tooltip>
           <span className="text-grey-50">{original.title}</span>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const columns = useMemo(() => {
     return [
       {
-        Header: (
-          <div className="text-small font-semibold text-gray-500">
-            {t("edit-product", "Product")}
-          </div>
-        ),
-        accessor: "sku",
+        Header: <div className="text-small font-semibold text-gray-500">{t('edit-product', 'Product')}</div>,
+        accessor: 'sku',
         Cell: ProductCell,
       },
       {
         Header: (
-          <div className="text-small text-right font-semibold text-gray-500">
-            {t("edit-in-stock", "In Stock")}
-          </div>
+          <div className="text-small text-right font-semibold text-gray-500">{t('edit-in-stock', 'In Stock')}</div>
         ),
-        accessor: "inventory_quantity",
+        accessor: 'inventory_quantity',
         Cell: VariantInventoryCell,
       },
       {
-        Header: (
-          <div className="text-small text-right font-semibold text-gray-500">
-            {t("edit-price", "Price")}
-          </div>
-        ),
-        accessor: "amount",
+        Header: <div className="text-small text-right font-semibold text-gray-500">{t('edit-price', 'Price')}</div>,
+        accessor: 'amount',
         Cell: ({ row: { original } }) => {
           if (!original.original_price_incl_tax) {
-            return null
+            return null;
           }
 
-          const showOriginal = original.calculated_price_type !== "default"
+          const showOriginal = original.calculated_price_type !== 'default';
 
           return (
             <div className="flex items-center justify-end gap-2">
@@ -187,16 +160,13 @@ const VariantsTable: React.FC<Props> = (props) => {
                   })}
                 </span>
               </div>
-              <span className="text-gray-400">
-                {" "}
-                {currencyCode.toUpperCase()}
-              </span>
+              <span className="text-gray-400"> {currencyCode.toUpperCase()}</span>
             </div>
-          )
+          );
         },
       },
-    ]
-  }, [])
+    ];
+  }, []);
 
   const table = useTable(
     {
@@ -211,85 +181,89 @@ const VariantsTable: React.FC<Props> = (props) => {
       pageCount: numPages,
       autoResetSelectedRows: false,
       autoResetPage: false,
-      getRowId: (row) => row.id,
+      getRowId: row => row.id,
     },
     usePagination,
     useRowSelect,
-    (hooks) => {
-      hooks.visibleColumns.push((columns) => [
+    hooks => {
+      hooks.visibleColumns.push(columns => [
         {
-          id: "selection",
+          id: 'selection',
           Header: ({ getToggleAllRowsSelectedProps }) => {
             if (isReplace) {
-              return null
+              return null;
             }
 
             return (
               <div>
-                <IndeterminateCheckbox
-                  {...getToggleAllRowsSelectedProps()}
-                  type={isReplace ? "radio" : "checkbox"}
-                />
+                <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} type={isReplace ? 'radio' : 'checkbox'} />
               </div>
-            )
+            );
           },
           Cell: ({ row, toggleAllRowsSelected, toggleRowSelected }) => {
-            const currentState = row.getToggleRowSelectedProps()
-            const selectProps = row.getToggleRowSelectedProps()
+            const currentState = row.getToggleRowSelectedProps();
+            const selectProps = row.getToggleRowSelectedProps();
 
             return (
-              <div className={clsx({ "mr-2": isReplace })}>
+              <div className={clsx({ 'mr-2': isReplace })}>
                 <IndeterminateCheckbox
                   {...selectProps}
-                  type={isReplace ? "radio" : "checkbox"}
+                  type={isReplace ? 'radio' : 'checkbox'}
                   onChange={
                     isReplace
                       ? () => {
-                          toggleAllRowsSelected(false)
-                          toggleRowSelected(row.id, !currentState.checked)
+                          toggleAllRowsSelected(false);
+                          toggleRowSelected(row.id, !currentState.checked);
                         }
                       : selectProps.onChange
                   }
                 />
               </div>
-            )
+            );
           },
         },
         ...columns,
-      ])
-    }
-  )
+      ]);
+    },
+  );
 
   useEffect(() => {
     if (!variants) {
-      return
+      return;
     }
 
-    const selected = variants.filter((v) => table.state.selectedRowIds[v.id])
-    setSelectedVariants(selected)
-  }, [table.state.selectedRowIds, variants])
+    const selected = variants.filter(v => table.state.selectedRowIds[v.id]);
+    setSelectedVariants(selected);
+  }, [table.state.selectedRowIds, variants]);
 
   const handleNext = () => {
     if (table.canNextPage) {
-      setOffset((old) => old + table.state.pageSize)
-      setCurrentPage((old) => old + 1)
-      table.nextPage()
+      setOffset(old => old + table.state.pageSize);
+      setCurrentPage(old => old + 1);
+      table.nextPage();
     }
-  }
+  };
 
   const handlePrev = () => {
     if (table.canPreviousPage) {
-      setOffset((old) => Math.max(old - table.state.pageSize, 0))
-      setCurrentPage((old) => old - 1)
-      table.previousPage()
+      setOffset(old => Math.max(old - table.state.pageSize, 0));
+      setCurrentPage(old => old - 1);
+      table.previousPage();
     }
-  }
+  };
 
-  const handleSearch = (q) => {
-    setOffset(0)
-    setCurrentPage(0)
-    setQuery(q)
-  }
+  const handlePageInput = (page: number) => {
+    if (page >= 1 && page <= numPages) {
+      table.gotoPage(page - 1);
+      setOffset(page * table.state.pageSize);
+    }
+  };
+
+  const handleSearch = q => {
+    setOffset(0);
+    setCurrentPage(0);
+    setQuery(q);
+  };
 
   return (
     <TableContainer
@@ -300,55 +274,47 @@ const VariantsTable: React.FC<Props> = (props) => {
         count: count!,
         offset: offset,
         pageSize: offset + table.rows.length,
-        title: t("edit-products", "Products"),
+        title: t('edit-products', 'Products'),
         currentPage: table.state.pageIndex + 1,
         pageCount: table.pageCount,
         nextPage: handleNext,
         prevPage: handlePrev,
         hasNext: table.canNextPage,
         hasPrev: table.canPreviousPage,
+        gotoPage: handlePageInput,
       }}
     >
       <Table
         immediateSearchFocus
         enableSearch
-        searchPlaceholder={t(
-          "edit-search-product-variants",
-          "Search Product Variants..."
-        )}
+        searchPlaceholder={t('edit-search-product-variants', 'Search Product Variants...')}
         searchValue={query}
         handleSearch={handleSearch}
         {...table.getTableProps()}
       >
-        {table.headerGroups.map((headerGroup) => (
+        {table.headerGroups.map(headerGroup => (
           <Table.HeadRow {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((col) => (
-              <Table.HeadCell {...col.getHeaderProps()}>
-                {col.render("Header")}
-              </Table.HeadCell>
+            {headerGroup.headers.map(col => (
+              <Table.HeadCell {...col.getHeaderProps()}>{col.render('Header')}</Table.HeadCell>
             ))}
           </Table.HeadRow>
         ))}
 
         <Table.Body {...table.getTableBodyProps()}>
-          {table.rows.map((row) => {
-            table.prepareRow(row)
+          {table.rows.map(row => {
+            table.prepareRow(row);
             return (
               <Table.Row {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <Table.Cell {...cell.getCellProps()}>
-                      {cell.render("Cell")}
-                    </Table.Cell>
-                  )
+                {row.cells.map(cell => {
+                  return <Table.Cell {...cell.getCellProps()}>{cell.render('Cell')}</Table.Cell>;
                 })}
               </Table.Row>
-            )
+            );
           })}
         </Table.Body>
       </Table>
     </TableContainer>
-  )
-}
+  );
+};
 
-export default VariantsTable
+export default VariantsTable;
