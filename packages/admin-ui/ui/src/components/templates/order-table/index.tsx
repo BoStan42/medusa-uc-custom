@@ -140,6 +140,13 @@ const OrderTable = ({ setContextFilters }: OrderTableProps) => {
     }
   };
 
+  const handlePageInput = (page: number) => {
+    if (page >= 1 && page <= numPages) {
+      gotoPage(page - 1);
+      paginate(page, 'goToPage');
+    }
+  };
+
   const updateUrlFromFilter = (obj = {}) => {
     const stringified = qs.stringify(obj);
     window.history.replaceState(`/a/orders`, '', `${`?${stringified}`}`);
@@ -181,6 +188,7 @@ const OrderTable = ({ setContextFilters }: OrderTableProps) => {
           prevPage: handlePrev,
           hasNext: canNextPage,
           hasPrev: canPreviousPage,
+          gotoPage: handlePageInput,
         }}
       >
         <Table
